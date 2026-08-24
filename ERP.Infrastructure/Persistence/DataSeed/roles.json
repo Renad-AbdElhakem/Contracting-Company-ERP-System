@@ -1,0 +1,42 @@
+[
+  {
+    "Id": 1,
+    "RoleName": "Project Manager"
+  },
+  {
+    "Id": 2,
+    "RoleName": "Site Engineer"
+  },
+  {
+    "Id": 3,
+    "RoleName": "Civil Engineer"
+  },
+  {
+    "Id": 4,
+    "RoleName": "Procurement Officer"
+  },
+  {
+    "Id": 5,
+    "RoleName": "Accountant"
+  },
+  {
+    "Id": 6,
+    "RoleName": "HR Specialist"
+  },
+  {
+    "Id": 7,
+    "RoleName": "Maintenance Engineer"
+  },
+  {
+    "Id": 8,
+    "RoleName": "Site Supervisor"
+  },
+  {
+    "Id": 9,
+    "RoleName": "Warehouse Keeper"
+  },
+  {
+    "Id": 10,
+    "RoleName": "Financial Manager"
+  }
+]

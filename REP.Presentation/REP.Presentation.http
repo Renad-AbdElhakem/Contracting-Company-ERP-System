@@ -1,0 +1,6 @@
+@REP.Presentation_HostAddress = http://localhost:5023
+
+GET {{REP.Presentation_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

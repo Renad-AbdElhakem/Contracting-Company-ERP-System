@@ -9,8 +9,8 @@ namespace ERP.Application.Interfaces.Services.Module_1_Project_Site_Management
 {
     public interface IProjectPhasesService
     {
-        Task<GeneralResponse<bool>> UpdateProjectPhaseDates(UpdateProjectPhaseDatesDto dto);
-        Task<GeneralResponse<bool>> FinishProjectPhase(FinishProjectPhaseDto dto);
-        Task<GeneralResponse<bool>> UpdateProjectPhaseEstimatedCost(UpdateProjectPhaseEstimatedCostDto dto);
+        Task<GeneralResponse<bool>> UpdateProjectPhaseDates(int projectPhaseId, UpdateProjectPhaseDatesDto dto);
+        Task<GeneralResponse<bool>> FinishProjectPhase(int projectPhaseId);
+        Task<GeneralResponse<bool>> UpdateProjectPhaseEstimatedCost(int projectPhaseId,UpdateProjectPhaseEstimatedCostDto dto);
     }
 }

@@ -8,7 +8,6 @@ namespace ERP.Application.Dtos.Module_1_Project_Site_Management
 {
     public class UpdateProjectPhaseDatesDto
     {
-        public int ProjectPhaseId { get; set; }
         public DateOnly StartDate { get; set; }
         public DateOnly? DueDate { get; set; }
     }

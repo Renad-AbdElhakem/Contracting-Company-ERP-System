@@ -1,5 +1,6 @@
 ﻿using ERP.Application.Dtos.Module_1_Project_Site_Management;
 using ERP.Application.Interfaces.Services.Module_1_Project_Site_Management;
+using ERP.Domain.Model._1_Project_Site_Management;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,42 +18,29 @@ namespace ERP.Presentation.Controllers.Module_1_Project_Site_Management
         }
 
 
-        [HttpPatch("dates")]
-        public async Task<IActionResult> UpdateProjectPhaseDates(
-            UpdateProjectPhaseDatesDto dto)
+        [HttpPatch("{projectPhaseId}/dates")]
+        public async Task<IActionResult> UpdateProjectPhaseDates(int projectPhaseId, UpdateProjectPhaseDatesDto dto)
         {
-            var result = await _projectPhasesService.UpdateProjectPhaseDates(dto);
+            var result = await _projectPhasesService.UpdateProjectPhaseDates(projectPhaseId, dto);
 
-            if (!result.IsSuccess)
-                return BadRequest(result);
-
-            return Ok(result);
+            return result.IsSuccess ? NoContent() : NotFound(result.Message);
         }
 
 
-        [HttpPatch("finish")]
-        public async Task<IActionResult> FinishProjectPhase(
-            FinishProjectPhaseDto dto)
+        [HttpPatch("{projectPhaseId}/finish")]
+        public async Task<IActionResult> FinishProjectPhase(int projectPhaseId)
         {
-            var result = await _projectPhasesService.FinishProjectPhase(dto);
-
-            if (!result.IsSuccess)
-                return BadRequest(result);
-
-            return Ok(result);
+            var result = await _projectPhasesService.FinishProjectPhase(projectPhaseId);
+            return result.IsSuccess ? NoContent() : NotFound(result.Message);
         }
 
 
-        [HttpPatch("estimated-cost")]
-        public async Task<IActionResult> UpdateProjectPhaseEstimatedCost(
-            UpdateProjectPhaseEstimatedCostDto dto)
+        [HttpPatch("{projectPhaseId}/estimated-cost")]
+        public async Task<IActionResult> UpdateProjectPhaseEstimatedCost(int projectPhaseId, UpdateProjectPhaseEstimatedCostDto dto)
         {
-            var result = await _projectPhasesService.UpdateProjectPhaseEstimatedCost(dto);
+            var result = await _projectPhasesService.UpdateProjectPhaseEstimatedCost(projectPhaseId,dto);
 
-            if (!result.IsSuccess)
-                return BadRequest(result);
-
-            return Ok(result);
+            return result.IsSuccess ? NoContent() : NotFound(result.Message);
         }
     }
 }

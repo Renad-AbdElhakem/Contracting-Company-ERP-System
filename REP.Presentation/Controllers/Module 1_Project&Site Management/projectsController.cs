@@ -22,19 +22,25 @@ namespace ERP.Presentation.Controllers.Module_1_Project_Site_Management
         {
             var result = await _projectService.CreateAsync(dto);
 
-            if (result is null)
-                return BadRequest("Client not found.");
-
-            return Ok(result);
+            return result.IsSuccess ? Ok(result.Data) : BadRequest(result.Message);
         }
 
 
         [HttpPatch("{id}/finish")]
         public async Task<IActionResult> FinishProject(Guid id)
         {
-            await _projectService.FinishProjectAsync(id);
+            var result = await _projectService.FinishProjectAsync(id);
 
-            return NoContent();
+            return result.IsSuccess ? NoContent() : NotFound(result.Message);
+
+        }
+        [HttpPatch("{projectId}/Canncelled")]
+        public async Task<IActionResult> CancelledProjectAsync(Guid projectId)
+        {
+            var result = await _projectService.CancelledProjectAsync(projectId);
+
+            return result.IsSuccess ? NoContent() : NotFound(result.Message);
+
         }
 
 
@@ -45,6 +51,13 @@ namespace ERP.Presentation.Controllers.Module_1_Project_Site_Management
 
             return Ok(result);
         }
+        [HttpGet("{projectId}")]
+        public async Task<IActionResult> GetProjectById(Guid projectId)
+        {
+            var result = await _projectService.GetProjectById(projectId);
+
+            return Ok(result);
+        }
 
 
         [HttpGet("{projectId}/phases")]
@@ -52,10 +65,7 @@ namespace ERP.Presentation.Controllers.Module_1_Project_Site_Management
         {
             var result = await _projectService.GetProjectPhasesDetails(projectId);
 
-            if (result is null)
-                return NotFound($"Project with id {projectId} not found.");
-
-            return Ok(result);
+            return result.IsSuccess ? Ok(result.Data) : NotFound(result.Message);
         }
 
 
@@ -64,10 +74,7 @@ namespace ERP.Presentation.Controllers.Module_1_Project_Site_Management
         {
             var result = await _projectService.GetProjectContractDetails(projectId);
 
-            if (result is null)
-                return NotFound($"Project with id {projectId} not found.");
-
-            return Ok(result);
+            return result.IsSuccess ? Ok(result.Data) : NotFound(result.Message);
         }
 
 
@@ -75,12 +82,9 @@ namespace ERP.Presentation.Controllers.Module_1_Project_Site_Management
         public async Task<IActionResult> GetProjectEmployees(Guid projectId)
         {
             var result = await _projectService.GetProjectEmployeesDetails(projectId);
-
-            if (result is null)
-                return NotFound($"Project with id {projectId} not found.");
-
-            return Ok(result);
+            return result.IsSuccess ? Ok(result.Data) : NotFound(result.Message);
         }
+
 
 
         [HttpPatch("{projectId}/timeline")]
@@ -88,53 +92,42 @@ namespace ERP.Presentation.Controllers.Module_1_Project_Site_Management
         {
             var result = await _projectService.UpdateProjectTimeline(projectId, dto);
 
-            if (!result)
-                return NotFound($"Project with id {projectId} not found.");
-
-            return Ok(true);
+            return result.IsSuccess ? NoContent() : NotFound(result.Message);
         }
 
 
         [HttpPatch("{projectId}")]
-        public async Task<IActionResult> UpdateProject(Guid projectId,UpdateProjectDto dto)
+        public async Task<IActionResult> UpdateProject(Guid projectId, UpdateProjectDto dto)
         {
             var result = await _projectService.UpdateProject(projectId, dto);
 
-            if (!result)
-                return NotFound($"Project with id {projectId} not found.");
-
-            return Ok(true);
+            return result.IsSuccess ? NoContent() : NotFound(result.Message);
         }
 
 
-        [HttpPost("employees")]
-        public async Task<IActionResult> AssignEmployeeToProject(AssignProjectEmployeeDto dto)
+        [HttpPost("{projectId}/employees")]
+        public async Task<IActionResult> AssignEmployeeToProject(Guid projectId, AssignEmployeeToProjectDto dto)
         {
-            var result = await _projectService.AssignEmployeeToProject(dto);
+            var result = await _projectService.AssignEmployeeToProject(projectId, dto);
 
-            if (!result.IsSuccess)
-                return BadRequest(result);
+            return result.IsSuccess ? Ok(result) : BadRequest(result.Message);
 
-            return Ok(result);
         }
 
 
-        [HttpDelete("employees")]
-        public async Task<IActionResult> RemoveEmployeeFromProject(RemoveEmployeeFromProjectDto dto)
+        [HttpDelete("{projectId}/employees/{employeeId}")]
+        public async Task<IActionResult> RemoveEmployeeFromProject(Guid projectId, int employeeId)
         {
-            var result = await _projectService.RemoveEmployeeFromProject(dto);
+            var result = await _projectService.RemoveEmployeeFromProject(projectId, employeeId);
 
-            if (!result.IsSuccess)
-                return BadRequest(result);
-
-            return Ok(result);
+            return result.IsSuccess ? NoContent() : NotFound(result.Message);
         }
 
 
-        [HttpPost("phases")]
-        public async Task<IActionResult> AddPhaseToProject(AssignProjectPhaseDto dto)
+        [HttpPost("{projectId}/phases")]
+        public async Task<IActionResult> AddPhaseToProject(Guid projectId, AssignProjectPhaseDto dto)
         {
-            var result = await _projectService.AddPhaseToProject(dto);
+            var result = await _projectService.AddPhaseToProject(projectId, dto);
 
             if (!result.IsSuccess)
                 return BadRequest(result);

@@ -28,7 +28,7 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
 
         public ProjectService(IProjectRepository projectRepository, IClientService clientService
                                 , IMapper mapper, IEmployeeService employeeService
-                                , IProjectEmployeeRepository projectEmployeeRepository,IProjectPhaseRepository phaseRepository)
+                                , IProjectEmployeeRepository projectEmployeeRepository, IProjectPhaseRepository phaseRepository)
         {
             _projectRepository = projectRepository;
             _clientService = clientService;
@@ -39,127 +39,118 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
         }
 
 
-        public async Task<Guid?> CreateAsync(CreateProjectDto dto)
+        public async Task<GeneralResponse<Guid>> CreateAsync(CreateProjectDto dto)
         {
             var client = await _clientService.GetByIdAsync(dto.ClientId);
 
             if (client is null)
-                return null;
+                return GeneralResponse<Guid>.Fail("Client not found");
 
             var project = _mapper.Map<Project>(dto);
 
             await _projectRepository.AddAsync(project);
 
-            return project.Id;
+            return GeneralResponse<Guid>.Success(project.Id);
         }
 
-        public async Task FinishProjectAsync(Guid id)
+        public async Task<GeneralResponse<bool>> FinishProjectAsync(Guid projectId)
         {
-            var project = await _projectRepository.GetByIdAsync(id);
-            if (project is null) return;
+            var project = await _projectRepository.GetByIdAsync(projectId);
+            if (project is null)
+                return GeneralResponse<bool>.Fail($"Project with id {projectId} not found");
 
             project.Status = ProjectStatus.Completed;
             project.ActualEndDate = DateOnly.FromDateTime(DateTime.UtcNow);
 
             await _projectRepository.UpdateAsync(project);
+
+            return GeneralResponse<bool>.Success(true);
+
         }
 
+        public async Task<GeneralResponse<bool>> CancelledProjectAsync(Guid projectId)
+        {
+            var project = await _projectRepository.GetByIdAsync(projectId);
+            if (project is null)
+                return GeneralResponse<bool>.Fail($"Project with id {projectId} not found");
 
-        public async Task<ProjectWithPhasesDto?> GetProjectPhasesDetails(Guid projectId)
+            project.Status = ProjectStatus.Cancelled;
+            project.ActualEndDate = DateOnly.FromDateTime(DateTime.UtcNow);
+
+            await _projectRepository.UpdateAsync(project);
+
+            return GeneralResponse<bool>.Success(true);
+
+        }
+
+        public async Task<GeneralResponse<List<ProjectPhasesDetailsDto>>> GetProjectPhasesDetails(Guid projectId)
         {
             var projectPhase = await _projectRepository.GetByIdWithInclude(projectId, ph => ph.ProjectPhases);
 
             if (projectPhase is null)
-                return null;
+                return GeneralResponse<List<ProjectPhasesDetailsDto>>.Fail($"Project with id {projectId} not found");
 
-   
+            var projectWithPhasesDetailsDto = _mapper.Map<List<ProjectPhasesDetailsDto>>(projectPhase.ProjectPhases);
 
-
-            var projectWithPhasesDetailsDto = new ProjectWithPhasesDto
-            {
-                ProjectId = projectId,
-                ProjectPhasesDetailsDtos = projectPhase.ProjectPhases.Select(ph => new ProjectPhasesDetailsDto
-                {
-                    PhaseName = ph.Phase.Name,
-                    StartDate = ph.StartDate,
-                    DueDate = ph.DueDate,
-                    FinishedDate = ph.FinishedDate,
-                    ActualCost = ph.ActualCost,
-                    EstimatedCost = ph.EstimatedCost,
-                    ActualCostCalculatedAt = ph.ActualCostCalculatedAt,
-                })
-                .ToList()
-
-            };
-
-            return projectWithPhasesDetailsDto;
+            return GeneralResponse<List<ProjectPhasesDetailsDto>>.Success(projectWithPhasesDetailsDto);
 
         }
 
-        public async Task<ProjectContractDto?> GetProjectContractDetails(Guid projectId)
+        public async Task<GeneralResponse<ProjectContractDto>> GetProjectContractDetails(Guid projectId)
         {
-            var projectContractDetails = await _projectRepository.GetByIdWithInclude(projectId, c => c.ContractProject);
+            var projectContractDetails = await _projectRepository.GetByIdWithInclude(projectId, c => c.ContractProject, x => x.Client);
 
             if (projectContractDetails is null)
-                return null;
+                return GeneralResponse<ProjectContractDto>.Fail($"Project with id {projectId} not found");
 
-           
+            var projectWithContractDetailsDto = _mapper.Map<ProjectContractDto>(projectContractDetails);
+            projectWithContractDetailsDto.ClientId = projectContractDetails.ClientId;
+            projectWithContractDetailsDto.ClientName = projectContractDetails.Client.Name;
 
-            var projectWithContractDetailsDto = new ProjectContractDto
-            {
-                ProjectId = projectId,
-                ClientId = projectContractDetails.ClientId,
-                ClientName = projectContractDetails.Client.Name,
-                SignDate = projectContractDetails.ContractProject.SignDate,
-                Status = projectContractDetails.ContractProject.Status,
-                TotalAmount = projectContractDetails.ContractProject.TotalAmount,
-                MaxPenaltyAmount = projectContractDetails.ContractProject.MaxPenaltyAmount,
-                PenaltyClauseNote = projectContractDetails.ContractProject.PenaltyClauseNote,
-                PenaltyPerDay = projectContractDetails.ContractProject.PenaltyPerDay,
-
-            };
-
-            return projectWithContractDetailsDto;
+            return GeneralResponse<ProjectContractDto>.Success(projectWithContractDetailsDto);
 
         }
-        public async Task<List<ProjectEmployeesDetailsDto?>> GetProjectEmployeesDetails(Guid projectId)
+
+        public async Task<GeneralResponse<List<ProjectEmployeesDetailsDto>>> GetProjectEmployeesDetails(Guid projectId)
         {
             var projectEmployees = await _projectRepository.GetProjectWithEmployees(projectId);
 
             if (projectEmployees is null)
-                return null;
+                return GeneralResponse<List<ProjectEmployeesDetailsDto>>.Fail($"Project with id {projectId} not found");
 
-            var projectEmployeesDetailsDto = projectEmployees.ProjectEmployees.Select(e => new ProjectEmployeesDetailsDto
-            {
-                EmployeeId = e.EmployeeId,
-                EmployeeName = e.Employee.Name,
-                Address = e.Employee.Address,
-                Email = e.Employee.Email,
-                Phone = e.Employee.Phone,
-            }).ToList();
+            var projectEmployeesDetailsDto = _mapper.Map<List<ProjectEmployeesDetailsDto>>(projectEmployees.ProjectEmployees);
 
-
-            return projectEmployeesDetailsDto;
+            return GeneralResponse<List<ProjectEmployeesDetailsDto>>.Success(projectEmployeesDetailsDto);
         }
 
 
         public async Task<List<ProjectDetailsDto>> GetAllProjects()
         {
-            var projectDetails = await _projectRepository.GetAllAsync();
+            var projectsDetails = await _projectRepository.GetAllAsync(c => c.Client);
 
-            var projectDetailsDto = _mapper.Map<List<ProjectDetailsDto>>(projectDetails);
+            var projectsDetailsDto = _mapper.Map<List<ProjectDetailsDto>>(projectsDetails);
 
-            return projectDetailsDto;
+            return projectsDetailsDto;
+
+        }
+        public async Task<GeneralResponse<ProjectDetailsDto>> GetProjectById(Guid projectId)
+        {
+            var projectDetails = await _projectRepository.GetByIdWithInclude(projectId, c => c.Client);
+            if (projectDetails is null)
+                return GeneralResponse<ProjectDetailsDto>.Fail($"Project with id {projectId} not found");
+            var projectDetailsDto = _mapper.Map<ProjectDetailsDto>(projectDetails);
+
+            return GeneralResponse<ProjectDetailsDto>.Success(projectDetailsDto);
 
         }
 
 
-        public async Task<bool> UpdateProjectTimeline(Guid projectId, UpdateProjectTimelineDto dto)
+        public async Task<GeneralResponse<bool>> UpdateProjectTimeline(Guid projectId, UpdateProjectTimelineDto dto)
         {
             var project = await _projectRepository.GetByIdAsync(projectId);
 
             if (project is null)
-                return false;
+                return GeneralResponse<bool>.Fail($"Project with id {projectId} not found");
 
             if (dto.StartDate.HasValue)
                 project.StartDate = dto.StartDate.Value;
@@ -169,15 +160,15 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
 
             await _projectRepository.UpdateAsync(project);
 
-            return true;
+            return GeneralResponse<bool>.Success(true);
         }
 
-        public async Task<bool> UpdateProject(Guid projectId, UpdateProjectDto dto)
+        public async Task<GeneralResponse<bool>> UpdateProject(Guid projectId, UpdateProjectDto dto)
         {
             var project = await _projectRepository.GetByIdAsync(projectId);
 
             if (project is null)
-                return false;
+                return GeneralResponse<bool>.Fail($"Project with id {projectId} not found");
 
             if (dto.Name is not null)
                 project.Name = dto.Name;
@@ -193,10 +184,10 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
 
             await _projectRepository.UpdateAsync(project);
 
-            return true;
+            return GeneralResponse<bool>.Success(true);
         }
 
-        public async Task<GeneralResponse<Guid>> AssignEmployeeToProject(AssignProjectEmployeeDto dto)
+        public async Task<GeneralResponse<Guid>> AssignEmployeeToProject(Guid projectId, AssignEmployeeToProjectDto dto)
         {
             var employee = await _employeeService.GetByIdAsync(dto.EmployeeId);
 
@@ -209,10 +200,10 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
             if (employee.Status != EmployeeStatus.Active)
                 return GeneralResponse<Guid>.Fail($"Employee with id {dto.EmployeeId} is not active.");
 
-            var project = await _projectRepository.GetByIdAsync(dto.ProjectId);
+            var project = await _projectRepository.GetByIdAsync(projectId);
 
             if (project is null)
-                return GeneralResponse<Guid>.Fail($"Project with id {dto.ProjectId} not found.");
+                return GeneralResponse<Guid>.Fail($"Project with id {projectId} not found.");
 
             if (project.ActualEndDate is not null && project.Status == ProjectStatus.Completed)
                 return GeneralResponse<Guid>.Fail("Project is already completed.");
@@ -228,31 +219,31 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
         }
 
 
-        public async Task<GeneralResponse<bool>> RemoveEmployeeFromProject(RemoveEmployeeFromProjectDto dto)
+        public async Task<GeneralResponse<bool>> RemoveEmployeeFromProject(Guid projectId, int employeeId)
         {
-            var projectEmployee = await _projectEmployeeRepository.GetByProjectAndEmployeeAsync(dto.ProjectId, dto.EmployeeId);
+            var projectEmployee = await _projectEmployeeRepository.GetByProjectAndEmployeeAsync(projectId, employeeId);
 
             if (projectEmployee is null)
-                return GeneralResponse<bool>.Fail($"Employee with id {dto.EmployeeId} is not assigned to project with id {dto.ProjectId}.");
+                return GeneralResponse<bool>.Fail($"Employee with id {employeeId} is not assigned to project with id {projectId}.");
 
             await _projectEmployeeRepository.DeleteAsync(projectEmployee);
 
             return GeneralResponse<bool>.Success(true);
         }
-        public async Task<GeneralResponse<int>> AddPhaseToProject(AssignProjectPhaseDto dto)
+        public async Task<GeneralResponse<int>> AddPhaseToProject(Guid projectId, AssignProjectPhaseDto dto)
         {
-            var project = await _projectRepository.GetByIdAsync(dto.ProjectId);
+            var project = await _projectRepository.GetByIdAsync(projectId);
 
             if (project is null)
                 return GeneralResponse<int>.Fail(
-                    $"Project with id {dto.ProjectId} not found.");
+                    $"Project with id {projectId} not found.");
 
 
-            var existingProjectPhase =await _projectPhaseRepository.GetByProjectAndPhaseAsync( dto.ProjectId,  dto.PhaseId);
+            var existingProjectPhase = await _projectPhaseRepository.GetByProjectAndPhaseAsync(projectId, dto.PhaseId);
 
             if (existingProjectPhase is not null)
                 return GeneralResponse<int>.Fail(
-                    $"Phase with id {dto.PhaseId} is already assigned to project with id {dto.ProjectId}.");
+                    $"Phase with id {dto.PhaseId} is already assigned to project with id {projectId}.");
 
             var projectPhase = _mapper.Map<ProjectPhase>(dto);
 
@@ -260,6 +251,6 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
 
             return GeneralResponse<int>.Success(projectPhase.Id);
         }
-     
+
     }
 }

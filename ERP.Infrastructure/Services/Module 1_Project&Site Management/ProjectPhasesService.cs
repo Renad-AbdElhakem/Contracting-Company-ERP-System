@@ -18,18 +18,16 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
         {
              _projectPhaseRepository = projectPhaseRepository;
         }
-        public async Task<GeneralResponse<bool>> UpdateProjectPhaseDates( UpdateProjectPhaseDatesDto dto)
+        public async Task<GeneralResponse<bool>> UpdateProjectPhaseDates( int projectPhaseId, UpdateProjectPhaseDatesDto dto)
         {
-            var projectPhase = await _projectPhaseRepository
-                .GetByIdAsync(dto.ProjectPhaseId);
+            var projectPhase = await _projectPhaseRepository.GetByIdAsync(projectPhaseId);
 
             if (projectPhase is null)
                 return GeneralResponse<bool>.Fail(
-                    $"Project phase with id {dto.ProjectPhaseId} not found.");
+                    $"Project phase with id {projectPhaseId} not found.");
 
             if (projectPhase.FinishedDate is not null)
-                return GeneralResponse<bool>.Fail(
-                    "Cannot update dates of a finished phase.");
+                return GeneralResponse<bool>.Fail("Cannot update dates of a finished phase.");
 
             projectPhase.StartDate = dto.StartDate;
             projectPhase.DueDate = dto.DueDate;
@@ -38,17 +36,15 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
 
             return GeneralResponse<bool>.Success(true);
         }
-        public async Task<GeneralResponse<bool>> FinishProjectPhase(FinishProjectPhaseDto dto)
+        public async Task<GeneralResponse<bool>> FinishProjectPhase(int projectPhaseId)
         {
-            var projectPhase = await _projectPhaseRepository.GetByIdAsync(dto.ProjectPhaseId);
+            var projectPhase = await _projectPhaseRepository.GetByIdAsync(projectPhaseId);
 
             if (projectPhase is null)
-                return GeneralResponse<bool>.Fail(
-                    $"Project phase with id {dto.ProjectPhaseId} not found.");
+                return GeneralResponse<bool>.Fail($"Project phase with id {projectPhaseId} not found.");
 
             if (projectPhase.FinishedDate is not null)
-                return GeneralResponse<bool>.Fail(
-                    "Project phase is already finished.");
+                return GeneralResponse<bool>.Fail("Project phase is already finished.");
 
             projectPhase.FinishedDate = DateOnly.FromDateTime(DateTime.UtcNow);
           
@@ -63,13 +59,13 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
             return GeneralResponse<bool>.Success(true);
         }
 
-        public async Task<GeneralResponse<bool>> UpdateProjectPhaseEstimatedCost(UpdateProjectPhaseEstimatedCostDto dto)
+        public async Task<GeneralResponse<bool>> UpdateProjectPhaseEstimatedCost(int projectPhaseId, UpdateProjectPhaseEstimatedCostDto dto)
         {
-            var projectPhase = await _projectPhaseRepository.GetByIdAsync(dto.ProjectPhaseId);
+            var projectPhase = await _projectPhaseRepository.GetByIdAsync(projectPhaseId);
 
             if (projectPhase is null)
                 return GeneralResponse<bool>.Fail(
-                    $"Project phase with id {dto.ProjectPhaseId} not found.");
+                    $"Project phase with id {projectPhaseId} not found.");
 
             if (projectPhase.FinishedDate is not null)
                 return GeneralResponse<bool>.Fail("Cannot update estimated cost of a finished phase.");

@@ -22,6 +22,8 @@ namespace ERP.Application.AutoMapper.Module_1_Project_Site_Management
               
                 .ForMember(dest => dest.DepartmentName,
                     opt => opt.MapFrom(src => src.Department.Name));
+
+
         }
     }
 }

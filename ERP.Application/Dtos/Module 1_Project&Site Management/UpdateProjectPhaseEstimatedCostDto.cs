@@ -8,7 +8,6 @@ namespace ERP.Application.Dtos.Module_1_Project_Site_Management
 {
     public class UpdateProjectPhaseEstimatedCostDto
     {
-        public int ProjectPhaseId { get; set; }
         public decimal EstimatedCost { get; set; }
     }
 }

@@ -9,26 +9,26 @@ namespace ERP.Application.Interfaces.Services.Module_1_Project_Site_Management
 {
     public interface IProjectService
     {
-        Task<Guid?> CreateAsync(CreateProjectDto dto);
+        Task<GeneralResponse<Guid>> CreateAsync(CreateProjectDto dto);
+        Task<GeneralResponse<bool>> FinishProjectAsync(Guid projectId);
+        Task<GeneralResponse<bool>> CancelledProjectAsync(Guid projectId);
+        Task<GeneralResponse<List<ProjectPhasesDetailsDto>>> GetProjectPhasesDetails(Guid projectId);
 
-        Task FinishProjectAsync(Guid id);
+        Task<GeneralResponse<ProjectContractDto>> GetProjectContractDetails(Guid projectId);
 
-        Task<ProjectWithPhasesDto?> GetProjectPhasesDetails(Guid projectId);
-
-        Task<ProjectContractDto?> GetProjectContractDetails(Guid projectId);
-
-        Task<List<ProjectEmployeesDetailsDto?>> GetProjectEmployeesDetails(Guid projectId);
+        Task<GeneralResponse<List<ProjectEmployeesDetailsDto>>> GetProjectEmployeesDetails(Guid projectId);
 
         Task<List<ProjectDetailsDto>> GetAllProjects();
+        Task<GeneralResponse<ProjectDetailsDto>> GetProjectById(Guid projectId);
 
-        Task<bool> UpdateProjectTimeline(Guid projectId, UpdateProjectTimelineDto dto);
+        Task<GeneralResponse<bool>> UpdateProjectTimeline(Guid projectId, UpdateProjectTimelineDto dto);
 
-        Task<bool> UpdateProject(Guid projectId, UpdateProjectDto dto);
+        Task<GeneralResponse<bool>> UpdateProject(Guid projectId, UpdateProjectDto dto);
 
-        Task<GeneralResponse<Guid>> AssignEmployeeToProject(AssignProjectEmployeeDto dto);
+        Task<GeneralResponse<Guid>> AssignEmployeeToProject(Guid projectId, AssignEmployeeToProjectDto dto);
 
-        Task<GeneralResponse<bool>> RemoveEmployeeFromProject(RemoveEmployeeFromProjectDto dto);
+        Task<GeneralResponse<bool>> RemoveEmployeeFromProject(Guid projectId, int employeeId);
 
-        Task<GeneralResponse<int>> AddPhaseToProject(AssignProjectPhaseDto dto);
+        Task<GeneralResponse<int>> AddPhaseToProject(Guid projectId, AssignProjectPhaseDto dto);
     }
 }

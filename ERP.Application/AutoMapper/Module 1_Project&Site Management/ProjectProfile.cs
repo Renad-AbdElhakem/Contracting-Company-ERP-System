@@ -17,25 +17,27 @@ namespace ERP.Application.AutoMapper
             CreateMap<CreateProjectDto, Project>();
 
             CreateMap<Project, ProjectDetailsDto>()
-                .ForMember(
-                    dest => dest.ClientName,
-                    opt => opt.MapFrom(src => src.Client.Name)
+                .ForMember( dest => dest.ClientName, opt => opt.MapFrom(src => src.Client.Name)
                 );
-            //---------------------------------------------------
+
+            //--------------------ProjectPhase-------------------------
             CreateMap<ProjectPhase, ProjectPhasesDetailsDto>()
                 .ForMember(
                     dest => dest.PhaseName,
                     opt => opt.MapFrom(src => src.Phase.Name)
                 );
-            //***********************
+
             CreateMap<AssignProjectPhaseDto, ProjectPhase>();
             //----------------------------------------------------
 
-            CreateMap<ContractProject, ProjectContractDto>()
-                .ForMember(dest => dest.ClientName, opt => opt.MapFrom(src => src.Client.Name));
+            CreateMap<ContractProject, ProjectContractDto>();
+
             //-----------------------------
 
-            CreateMap<AssignProjectEmployeeDto, ProjectEmployee>();
+            CreateMap<AssignEmployeeToProjectDto, ProjectEmployee>();
+
+            CreateMap<ProjectEmployee, ProjectEmployeesDetailsDto>()
+                .ForMember(dest => dest.EmployeeName, opt => opt.MapFrom(src => src.Employee.Name));
 
 
         }

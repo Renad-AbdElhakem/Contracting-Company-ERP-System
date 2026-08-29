@@ -26,8 +26,8 @@ namespace ERP.Domain.Model
 
         public Guid ClientId { get; set; }
         public Client Client { get; set; } = null!;
-        public ContractProject ContractProject { get; set; } = null!;
-        public ICollection<ProjectWarehouse> ProjectWarehouses { get; set; } = new HashSet<ProjectWarehouse>();
+        public ContractProject? ContractProject { get; set; } 
+        public ICollection<ProjectWarehouse> ProjectWarehouses { get; set; } = new List<ProjectWarehouse>();
         public ICollection<ProjectPhase>? ProjectPhases { get; set; } = new List<ProjectPhase>();
         public ICollection<ProjectEmployee>? ProjectEmployees { get; set; } = new List<ProjectEmployee>();
         public ICollection<ProjectOrderRequest>? ProjectOrderRequests { get; set; } = new List<ProjectOrderRequest>();

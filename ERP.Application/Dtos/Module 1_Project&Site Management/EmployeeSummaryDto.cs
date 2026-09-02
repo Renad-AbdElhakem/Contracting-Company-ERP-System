@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ERP.Application.Dtos.Module_1_Project_Site_Management
 {
-    public class ProjectEmployeesDetailsDto
+    public class EmployeeSummaryDto
     {
         public int EmployeeId { get; set; }
         public string EmployeeName { get; set; } = string.Empty;

@@ -24,6 +24,7 @@ namespace ERP.Infrastructure.Repository
         public async Task AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
+            await _dbContext.SaveChangesAsync();    
         }
 
         public async Task DeleteAsync(T entity)

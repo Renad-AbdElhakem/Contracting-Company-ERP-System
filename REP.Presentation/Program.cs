@@ -1,13 +1,18 @@
 
 using ERP.Application.AutoMapper;
 using ERP.Application.AutoMapper.Module_1_Project_Site_Management;
+using ERP.Application.AutoMapper.Module_3___Equipment_Machinery;
 using ERP.Application.Interfaces.Repository;
 using ERP.Application.Interfaces.Repository.Module_1_Project_Site_Management;
+using ERP.Application.Interfaces.Repository.Module_3___Equipment_Machinery;
 using ERP.Application.Interfaces.Services;
 using ERP.Application.Interfaces.Services.Module_1_Project_Site_Management;
+using ERP.Application.Interfaces.Services.Module_3___Equipment_Machinery;
 using ERP.Infrastructure.Persistence;
 using ERP.Infrastructure.Repository.Module_1_Project_Site_Management;
+using ERP.Infrastructure.Repository.Module_3___Equipment_Machinery;
 using ERP.Infrastructure.Services.Module_1_Project_Site_Management;
+using ERP.Infrastructure.Services.Module_3___Equipment_Machinery;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -35,18 +40,14 @@ namespace REP.Presentation
                 cfg.AddProfile<EmployeeProfile>();
                 cfg.AddProfile<ClientProfile>();
                 cfg.AddProfile<DepartmentProfile>();
+                cfg.AddProfile<EquipmentProfile>();
                 cfg.AddProfile<ProjectProfile>();
-                //cfg.AddProfile<MemberProfile>();
-                //cfg.AddProfile<SubscriptionTypeMappingProfile>();
-                //cfg.AddProfile<AttendanceMemberProfile>();
-                //cfg.AddProfile<EmployeeAttendanceProfile>();
-                //cfg.AddProfile<LeaveRequestProfile>();
-
+               
             });
 
-            // builder.Services.AddAutoMapper();
 
-            //--------------------Module_1_Project_Site_Management(Repository)-----------------------
+          
+            #region Module_1_Project_Site_Management(Repository)
 
             builder.Services.AddScoped<IRoleRepository, RoleRepository>();
             builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
@@ -55,8 +56,22 @@ namespace REP.Presentation
             builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
             builder.Services.AddScoped<IProjectEmployeeRepository, ProjectEmployeeRepository>();
             builder.Services.AddScoped<IProjectPhaseRepository, ProjectPhaseRepository>();
+            builder.Services.AddScoped<IPhaseRepository, PhaseRepository>();
 
-            //--------------------Module_1_Project_Site_Management(Service)-----------------------
+            #endregion
+
+          
+
+            #region Module 3 — Equipment&Machinery(Repository)
+            
+            builder.Services.AddScoped<IEquipmentRepository, EquipmentRepository>();
+            builder.Services.AddScoped<IMaintenanceRepository, MaintenanceRepository>();
+            builder.Services.AddScoped<IMaintenanceEmployeeRepository, MaintenanceEmployeeRepository>();
+            builder.Services.AddScoped<IProjectEquipmentRepository, ProjectEquipmentRepository>();
+
+            #endregion
+        
+            #region Module_1_Project_Site_Management(Service)
 
             builder.Services.AddScoped<IRoleService, RoleService>();
             builder.Services.AddScoped<IDepartmentService, DepartmentService>();
@@ -64,7 +79,16 @@ namespace REP.Presentation
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
             builder.Services.AddScoped<IProjectService, ProjectService>();
             builder.Services.AddScoped<IProjectPhasesService, ProjectPhasesService>();
+            builder.Services.AddScoped<IPhaseService, PhaseService>();
 
+            #endregion
+
+            #region Module 3 — Equipment&Machinery(Service)
+            builder.Services.AddScoped<IEquipmentService, EquipmentService>();
+            builder.Services.AddScoped<IMaintenanceService, MaintenanceService>();
+            builder.Services.AddScoped<IProjectEquipmentService, ProjectEquipmentService>();
+
+            #endregion
 
             var app = builder.Build();
 

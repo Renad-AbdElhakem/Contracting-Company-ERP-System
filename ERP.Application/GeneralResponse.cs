@@ -30,7 +30,7 @@ namespace ERP.Application
             return new GeneralResponse<T>
             {
 
-                IsSuccess = true,
+                IsSuccess = false,
                 Message = Message
             };
 

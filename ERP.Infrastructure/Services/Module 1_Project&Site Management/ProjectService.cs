@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
 using ERP.Application;
 using ERP.Application.Dtos.Module_1_Project_Site_Management;
+using ERP.Application.Dtos.Module_3___Equipment_Machinery;
 using ERP.Application.Interfaces.Repository;
 using ERP.Application.Interfaces.Repository.Module_1_Project_Site_Management;
 using ERP.Application.Interfaces.Services;
 using ERP.Application.Interfaces.Services.Module_1_Project_Site_Management;
+using ERP.Application.Interfaces.Services.Module_3___Equipment_Machinery;
 using ERP.Domain.Enum;
 using ERP.Domain.Model;
 using ERP.Domain.Model._1_Project_Site_Management;
+using ERP.Domain.Model.Module_3___Equipment_Machinery;
 using ERP.Infrastructure.Repository.Module_1_Project_Site_Management;
 using System;
 using System.Collections.Generic;
@@ -22,20 +25,27 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
         private readonly IProjectRepository _projectRepository;
         private readonly IClientService _clientService;
         private readonly IMapper _mapper;
+        private readonly IPhaseService _phaseService;
         private readonly IEmployeeService _employeeService;
         private readonly IProjectEmployeeRepository _projectEmployeeRepository;
         private readonly IProjectPhaseRepository _projectPhaseRepository;
+        private readonly IEquipmentService _equipmentService;
+        private readonly IProjectEquipmentService _projectEquipmentService;
 
         public ProjectService(IProjectRepository projectRepository, IClientService clientService
-                                , IMapper mapper, IEmployeeService employeeService
-                                , IProjectEmployeeRepository projectEmployeeRepository, IProjectPhaseRepository phaseRepository)
+                                , IMapper mapper,IPhaseService phaseService, IEmployeeService employeeService
+                                , IProjectEmployeeRepository projectEmployeeRepository, IProjectPhaseRepository phaseRepository
+                                , IEquipmentService equipmentService,IProjectEquipmentService projectEquipmentService)
         {
             _projectRepository = projectRepository;
             _clientService = clientService;
             _mapper = mapper;
+           _phaseService = phaseService;
             _employeeService = employeeService;
             _projectEmployeeRepository = projectEmployeeRepository;
             _projectPhaseRepository = phaseRepository;
+            _equipmentService = equipmentService;
+           _projectEquipmentService = projectEquipmentService;
         }
 
 
@@ -56,14 +66,20 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
         public async Task<GeneralResponse<bool>> FinishProjectAsync(Guid projectId)
         {
             var project = await _projectRepository.GetByIdAsync(projectId);
+           
             if (project is null)
                 return GeneralResponse<bool>.Fail($"Project with id {projectId} not found");
 
+          var response=  await _projectEquipmentService.UnassignEquipmentAsync(projectId);
+            
+            if (!response.IsSuccess)
+                return GeneralResponse<bool>.Fail(response.Message);
+
             project.Status = ProjectStatus.Completed;
             project.ActualEndDate = DateOnly.FromDateTime(DateTime.UtcNow);
-
+            
             await _projectRepository.UpdateAsync(project);
-
+            
             return GeneralResponse<bool>.Success(true);
 
         }
@@ -111,16 +127,16 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
 
         }
 
-        public async Task<GeneralResponse<List<ProjectEmployeesDetailsDto>>> GetProjectEmployeesDetails(Guid projectId)
+        public async Task<GeneralResponse<List<EmployeeSummaryDto>>> GetProjectEmployeesDetails(Guid projectId)
         {
             var projectEmployees = await _projectRepository.GetProjectWithEmployees(projectId);
 
             if (projectEmployees is null)
-                return GeneralResponse<List<ProjectEmployeesDetailsDto>>.Fail($"Project with id {projectId} not found");
+                return GeneralResponse<List<EmployeeSummaryDto>>.Fail($"Project with id {projectId} not found");
 
-            var projectEmployeesDetailsDto = _mapper.Map<List<ProjectEmployeesDetailsDto>>(projectEmployees.ProjectEmployees);
+            var projectEmployeesDetailsDto = _mapper.Map<List<EmployeeSummaryDto>>(projectEmployees.ProjectEmployees);
 
-            return GeneralResponse<List<ProjectEmployeesDetailsDto>>.Success(projectEmployeesDetailsDto);
+            return GeneralResponse<List<EmployeeSummaryDto>>.Success(projectEmployeesDetailsDto);
         }
 
 
@@ -212,8 +228,13 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
                 return GeneralResponse<Guid>.Fail("Project is not active and cannot be modified.");
 
             var projectEmployee = _mapper.Map<ProjectEmployee>(dto);
+            projectEmployee.ProjectId = projectId;
 
-            await _projectEmployeeRepository.AddAsync(projectEmployee);
+            project.ProjectEmployees.Add(projectEmployee);
+
+            await _projectRepository.UpdateAsync(project);
+
+            // await _projectEmployeeRepository.AddAsync(projectEmployee);
 
             return GeneralResponse<Guid>.Success(projectEmployee.Id);
         }
@@ -230,27 +251,78 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
 
             return GeneralResponse<bool>.Success(true);
         }
+
         public async Task<GeneralResponse<int>> AddPhaseToProject(Guid projectId, AssignProjectPhaseDto dto)
         {
             var project = await _projectRepository.GetByIdAsync(projectId);
 
             if (project is null)
-                return GeneralResponse<int>.Fail(
-                    $"Project with id {projectId} not found.");
+                return GeneralResponse<int>.Fail($"Project with id {projectId} not found.");
 
+            var existingPhase= await _phaseService.GetPhaseByIdAsync(dto.PhaseId);
+         
+            if (!existingPhase.IsSuccess)
+                return GeneralResponse<int>.Fail($"Phase with id {dto.PhaseId} not found.");
 
             var existingProjectPhase = await _projectPhaseRepository.GetByProjectAndPhaseAsync(projectId, dto.PhaseId);
 
             if (existingProjectPhase is not null)
-                return GeneralResponse<int>.Fail(
-                    $"Phase with id {dto.PhaseId} is already assigned to project with id {projectId}.");
+                return GeneralResponse<int>.Fail($"Phase with id {dto.PhaseId} is already assigned to project with id {projectId}.");
 
             var projectPhase = _mapper.Map<ProjectPhase>(dto);
-
+            projectPhase.ProjectId = projectId;
             await _projectPhaseRepository.AddAsync(projectPhase);
 
             return GeneralResponse<int>.Success(projectPhase.Id);
         }
+
+        public async Task<GeneralResponse<int>> AssignEquipmentToProject(Guid projectId, AssignProjectEquipment dto)
+        {
+            var project = await _projectRepository.GetByIdAsync(projectId);
+
+            if (project is null)
+                return GeneralResponse<int>.Fail($"Project with id {projectId} not found.");
+
+            if (project.ActualEndDate is not null)
+                return GeneralResponse<int>.Fail($"Project with id {projectId} already finished.");
+
+
+            var equipment = await _equipmentService.GetEquipmentById(dto.EquipmentId);
+            
+            if (!equipment.IsSuccess)
+                return GeneralResponse<int>.Fail(equipment.Message);
+            
+            if (equipment.Data.EquipmentStatus != EquipmentStatus.Available)
+                return GeneralResponse<int>.Fail($"Equipment is not available. Current status: {equipment.Data.EquipmentStatus}.");
+
+            var result = await _equipmentService.MarkAsInUseAsync(equipment.Data.Id);
+            if (!result.IsSuccess)
+                return GeneralResponse<int>.Fail(result.Message);
+
+            var projectEquipment = _mapper.Map<ProjectEquipment>(dto);
+            projectEquipment.ProjectId = projectId;
+
+            project.ProjectEquipment.Add(projectEquipment);
+
+            await _projectRepository.UpdateAsync(project);
+
+            return GeneralResponse<int>.Success(projectEquipment.Id);
+
+        }
+
+        public async Task<GeneralResponse<List<ProjectEquipmentDto>>> GetAllEquipmentByProjectId(Guid projectId)
+        {
+            var project = await _projectRepository.GetByIdWithInclude(projectId, e => e.ProjectEquipment);
+
+            if (project is null)
+                return GeneralResponse<List<ProjectEquipmentDto>>.Fail($"Project with id {projectId} not found");
+
+            var projectEquipmentDto = _mapper.Map<List<ProjectEquipmentDto>>(project.ProjectEquipment);
+
+            return GeneralResponse<List<ProjectEquipmentDto>>.Success(projectEquipmentDto);
+
+        }
+
 
     }
 }

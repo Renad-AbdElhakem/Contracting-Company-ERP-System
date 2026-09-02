@@ -1,4 +1,5 @@
 ﻿using ERP.Application.Dtos.Module_1_Project_Site_Management;
+using ERP.Application.Dtos.Module_3___Equipment_Machinery;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace ERP.Application.Interfaces.Services.Module_1_Project_Site_Management
 
         Task<GeneralResponse<ProjectContractDto>> GetProjectContractDetails(Guid projectId);
 
-        Task<GeneralResponse<List<ProjectEmployeesDetailsDto>>> GetProjectEmployeesDetails(Guid projectId);
+        Task<GeneralResponse<List<EmployeeSummaryDto>>> GetProjectEmployeesDetails(Guid projectId);
 
         Task<List<ProjectDetailsDto>> GetAllProjects();
         Task<GeneralResponse<ProjectDetailsDto>> GetProjectById(Guid projectId);
@@ -30,5 +31,10 @@ namespace ERP.Application.Interfaces.Services.Module_1_Project_Site_Management
         Task<GeneralResponse<bool>> RemoveEmployeeFromProject(Guid projectId, int employeeId);
 
         Task<GeneralResponse<int>> AddPhaseToProject(Guid projectId, AssignProjectPhaseDto dto);
+
+        Task<GeneralResponse<int>> AssignEquipmentToProject(Guid projectId, AssignProjectEquipment dto);
+        Task<GeneralResponse<List<ProjectEquipmentDto>>> GetAllEquipmentByProjectId(Guid projectId);
+
+
     }
 }

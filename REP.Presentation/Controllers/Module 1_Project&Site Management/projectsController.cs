@@ -1,4 +1,5 @@
 ﻿using ERP.Application.Dtos.Module_1_Project_Site_Management;
+using ERP.Application.Dtos.Module_3___Equipment_Machinery;
 using ERP.Application.Interfaces.Services.Module_1_Project_Site_Management;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -134,5 +135,28 @@ namespace ERP.Presentation.Controllers.Module_1_Project_Site_Management
 
             return Ok(result);
         }
+
+
+
+        [HttpPost("{projectId}/equipment")]
+        public async Task<IActionResult> AssignEquipmentToProject(Guid projectId, AssignProjectEquipment dto)
+        {
+            var result = await _projectService.AssignEquipmentToProject(projectId, dto);
+
+            return result.IsSuccess ? Ok(result.Data):BadRequest(result.Message);   
+        }
+
+
+
+        [HttpGet("{projectId}/equipment")]
+        public async Task<IActionResult> GetAllEquipmentByProjectId(Guid projectId)
+        {
+            var result = await _projectService.GetAllEquipmentByProjectId(projectId);
+
+            return result.IsSuccess ? Ok(result.Data) :NotFound(result.Message);
+        }
+
+
+
     }
 }

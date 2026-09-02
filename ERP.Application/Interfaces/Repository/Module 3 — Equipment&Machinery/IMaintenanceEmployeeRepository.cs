@@ -1,0 +1,14 @@
+﻿using ERP.Domain.Model.Module_3___Equipment_Machinery;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ERP.Application.Interfaces.Repository.Module_3___Equipment_Machinery
+{
+    public interface IMaintenanceEmployeeRepository:IGenericRepository<MaintenanceEmployee>
+    {
+        Task<MaintenanceEmployee?> GetByMaintenanceAndEmployeeAsync(Guid maintenanceId, int employeeId);
+    }
+}

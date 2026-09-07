@@ -1,18 +1,23 @@
 
 using ERP.Application.AutoMapper;
 using ERP.Application.AutoMapper.Module_1_Project_Site_Management;
+using ERP.Application.AutoMapper.Module_2__Procurement_Inventory;
 using ERP.Application.AutoMapper.Module_3___Equipment_Machinery;
 using ERP.Application.Interfaces.Repository;
 using ERP.Application.Interfaces.Repository.Module_1_Project_Site_Management;
+using ERP.Application.Interfaces.Repository.Module_2__Procurement_Inventory;
 using ERP.Application.Interfaces.Repository.Module_3___Equipment_Machinery;
 using ERP.Application.Interfaces.Services;
 using ERP.Application.Interfaces.Services.Module_1_Project_Site_Management;
 using ERP.Application.Interfaces.Services.Module_3___Equipment_Machinery;
 using ERP.Infrastructure.Persistence;
 using ERP.Infrastructure.Repository.Module_1_Project_Site_Management;
+using ERP.Infrastructure.Repository.Module_2__Procurement_Inventory;
 using ERP.Infrastructure.Repository.Module_3___Equipment_Machinery;
 using ERP.Infrastructure.Services.Module_1_Project_Site_Management;
+using ERP.Infrastructure.Services.Module_2__Procurement_Inventory.SupplierHandler;
 using ERP.Infrastructure.Services.Module_3___Equipment_Machinery;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -42,11 +47,16 @@ namespace REP.Presentation
                 cfg.AddProfile<DepartmentProfile>();
                 cfg.AddProfile<EquipmentProfile>();
                 cfg.AddProfile<ProjectProfile>();
-               
+                cfg.AddProfile<SupplierProfile>();
+                cfg.AddProfile<MaterialProfile>();
+
             });
 
+            builder.Services.AddMediatR(cfg =>cfg.RegisterServicesFromAssembly(typeof(CreateNewSupplierCommandHandler).Assembly));
+            
+            
+            #region Repository
 
-          
             #region Module_1_Project_Site_Management(Repository)
 
             builder.Services.AddScoped<IRoleRepository, RoleRepository>();
@@ -60,17 +70,29 @@ namespace REP.Presentation
 
             #endregion
 
-          
+
+
 
             #region Module 3 — Equipment&Machinery(Repository)
-            
+
             builder.Services.AddScoped<IEquipmentRepository, EquipmentRepository>();
             builder.Services.AddScoped<IMaintenanceRepository, MaintenanceRepository>();
             builder.Services.AddScoped<IMaintenanceEmployeeRepository, MaintenanceEmployeeRepository>();
             builder.Services.AddScoped<IProjectEquipmentRepository, ProjectEquipmentRepository>();
 
             #endregion
-        
+
+            #region Module_2 _Procurement&Inventory(Repository)
+
+            builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+            builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
+            builder.Services.AddScoped<ISupplierMaterialPriceRepository, SupplierMaterialPriceRepository>();
+            #endregion
+
+            #endregion
+
+
+
             #region Module_1_Project_Site_Management(Service)
 
             builder.Services.AddScoped<IRoleService, RoleService>();

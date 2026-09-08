@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ERP.Domain.Enum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ namespace ERP.Domain.Model.Module_2__Procurement_Inventory
 
         public decimal Quantity { get; set; }
         public DateTime ArrivalDate { get; set; }
+        public ReceivingStatus ReceivingStatus { get; set; }
 
         //Navigation
 
@@ -23,7 +25,9 @@ namespace ERP.Domain.Model.Module_2__Procurement_Inventory
 
         public int ReceivedByEmployeeId { get; set; }
         public Employee Employee { get; set; }
+        public int ?SourceCompanyWarehouseStockId { get; set; }
+        public CompanyWarehouseStock ?SourceCompanyWarehouseStock { get; set; }
 
-        public ICollection<MaterialConsumption>? MaterialConsumptions { get; set; }=new List<MaterialConsumption>();
+        public ICollection<MaterialConsumption>? MaterialConsumptions { get; set; } = new List<MaterialConsumption>();
     }
 }

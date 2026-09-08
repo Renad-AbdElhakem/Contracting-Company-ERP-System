@@ -49,6 +49,8 @@ namespace REP.Presentation
                 cfg.AddProfile<ProjectProfile>();
                 cfg.AddProfile<SupplierProfile>();
                 cfg.AddProfile<MaterialProfile>();
+                cfg.AddProfile<CompanyWarehouseProfile>();
+                cfg.AddProfile<ProjectWarehouseProfile>();
 
             });
 
@@ -87,6 +89,9 @@ namespace REP.Presentation
             builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
             builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
             builder.Services.AddScoped<ISupplierMaterialPriceRepository, SupplierMaterialPriceRepository>();
+            builder.Services.AddScoped<ICompanyWarehouseRepository, CompanyWarehouseRepository>();
+            builder.Services.AddScoped<IProjectWarehouseRepository, ProjectWarehouseRepository>();
+       
             #endregion
 
             #endregion

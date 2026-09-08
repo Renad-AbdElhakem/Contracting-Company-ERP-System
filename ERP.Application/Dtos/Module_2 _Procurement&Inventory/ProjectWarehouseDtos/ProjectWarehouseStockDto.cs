@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ERP.Application.Dtos.Module_2__Procurement_Inventory.ProjectWarehouseDtos
+{
+    public class ProjectWarehouseStockDto
+    {
+        public int Id { get; set; }
+        public Guid MaterialId { get; set; }
+        public decimal Quantity { get; set; }
+        public DateTime ArrivalDate { get; set; }
+        public int ReceivedByEmployeeId { get; set; }
+        public string ReceivedByEmployeeName { get; set; } = string.Empty;
+
+    }
+}

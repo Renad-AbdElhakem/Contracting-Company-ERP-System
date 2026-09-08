@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ERP.Domain.Model.Module_2__Procurement_Inventory;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ERP.Domain.Model
 {
-   public class MaterialPurchaseItem
+    public class MaterialPurchaseItem
     {
         public Guid Id { get; set; }
         public decimal Quantity { get; set; }
@@ -17,6 +18,7 @@ namespace ERP.Domain.Model
         public MaterialPurchase MaterialPurchase { get; set; }
         public Guid MaterialId { get; set; }
         public Material Material {  get; set; }
-      
+        public ICollection<CompanyWarehouseStock>? CompanyWarehouseStocks { get; set; } = new List<CompanyWarehouseStock>();
+
     }
 }

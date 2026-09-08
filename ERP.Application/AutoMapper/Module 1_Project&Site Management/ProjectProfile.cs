@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ERP.Application.Dtos.Module_1_Project_Site_Management;
+using ERP.Application.Dtos.Module_2__Procurement_Inventory.ProjectWarehouseDtos;
 using ERP.Application.Dtos.Module_3___Equipment_Machinery;
 using ERP.Domain.Model;
 using ERP.Domain.Model._1_Project_Site_Management;
@@ -52,6 +53,9 @@ namespace ERP.Application.AutoMapper
             //----------------------------------------
 
             CreateMap<AssignProjectEquipment, ProjectEquipment>();
+            //----------------------------------------
+
+            CreateMap<AddProjectWarehouseDto, ProjectWarehouse>();
         }
     }
 }

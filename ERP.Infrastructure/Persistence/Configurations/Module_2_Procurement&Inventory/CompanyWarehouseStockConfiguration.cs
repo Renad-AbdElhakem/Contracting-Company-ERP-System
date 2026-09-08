@@ -19,6 +19,17 @@ namespace ERP.Infrastructure.Persistence.Configurations.Module_2_Procurement_Inv
                    .WithMany(e => e.CompanyWarehouseStocks)
                    .HasForeignKey(x => x.ReceivedByEmployeeId)
                    .OnDelete(DeleteBehavior.Restrict);
+
+
+            builder.HasOne(s => s.MaterialPurchaseItem)
+                  .WithMany(i => i.CompanyWarehouseStocks)
+                  .HasForeignKey(s => s.MaterialPurchaseItemId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasMany(s => s.ProjectWarehouseStocks)
+                .WithOne(p => p.SourceCompanyWarehouseStock)
+                .HasForeignKey(p => p.SourceCompanyWarehouseStockId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

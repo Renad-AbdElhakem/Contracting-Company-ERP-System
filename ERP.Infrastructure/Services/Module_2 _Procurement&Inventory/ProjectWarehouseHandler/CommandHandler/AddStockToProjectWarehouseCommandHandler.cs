@@ -21,7 +21,7 @@ namespace ERP.Infrastructure.Services.Module_2__Procurement_Inventory.ProjectWar
         private readonly IMaterialRepository _materialRepository;
         private readonly IEmployeeRepository _employeeRepository;
 
-        public AddStockToProjectWarehouseCommandHandler(IMapper mapper,IProjectWarehouseRepository warehouseRepository,
+        public AddStockToProjectWarehouseCommandHandler(IMapper mapper, IProjectWarehouseRepository warehouseRepository,
                                                          IMaterialRepository materialRepository, IEmployeeRepository employeeRepository)
         {
             _mapper = mapper;
@@ -46,20 +46,22 @@ namespace ERP.Infrastructure.Services.Module_2__Procurement_Inventory.ProjectWar
 
             if (employee == null)
                 return GeneralResponse<int>.Fail($"Employee with id {request.StockDto.ReceivedByEmployeeId} not found");
-            
+
             if (employee.TerminationDate is not null)
                 return GeneralResponse<int>.Fail($"Employee with id {request.StockDto.ReceivedByEmployeeId} has been terminated");
 
             if (employee.Status != EmployeeStatus.Active)
                 return GeneralResponse<int>.Fail($"Employee with id {request.StockDto.ReceivedByEmployeeId} is not active");
-           
+
             if (request.StockDto.Quantity <= 0)
                 return GeneralResponse<int>.Fail("Quantity must be greater than zero");
 
             var stock = _mapper.Map<ProjectWarehouseStock>(request.StockDto);
+            stock.RemainingQuantity = request.StockDto.Quantity;
+            stock.ArrivalDate = DateTime.Now;
 
             warehouse.ProjectWarehouseStocks.Add(stock);
-          
+
             await _warehouseRepository.UpdateAsync(warehouse);
 
             return GeneralResponse<int>.Success(stock.Id);

@@ -51,6 +51,8 @@ namespace REP.Presentation
                 cfg.AddProfile<MaterialProfile>();
                 cfg.AddProfile<CompanyWarehouseProfile>();
                 cfg.AddProfile<ProjectWarehouseProfile>();
+                cfg.AddProfile<MaterialRequirementProfile>();
+                cfg.AddProfile<MaterialConsumptionProfile>();
 
             });
 
@@ -91,6 +93,8 @@ namespace REP.Presentation
             builder.Services.AddScoped<ISupplierMaterialPriceRepository, SupplierMaterialPriceRepository>();
             builder.Services.AddScoped<ICompanyWarehouseRepository, CompanyWarehouseRepository>();
             builder.Services.AddScoped<IProjectWarehouseRepository, ProjectWarehouseRepository>();
+            builder.Services.AddScoped<IPhaseMaterialRequirementRepository, PhaseMaterialRequirementRepository>();
+            builder.Services.AddScoped<IProjectWarehouseStockRepository, ProjectWarehouseStockRepository>();
        
             #endregion
 

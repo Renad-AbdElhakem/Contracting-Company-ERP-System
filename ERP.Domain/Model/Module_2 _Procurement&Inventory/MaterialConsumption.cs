@@ -16,11 +16,14 @@ namespace ERP.Domain.Model.Module_2__Procurement_Inventory
 
         //Navigation 
 
-        public int ProjectWarehouseStockId { get; set; }   // FK → ProjectWarehouseStock (tells you the material)
+        public int ProjectWarehouseStockId { get; set; }  
         public ProjectWarehouseStock ProjectWarehouseStock { get; set; }
 
-        public int ProjectPhaseId { get; set; }             // FK → ProjectPhase (which phase used it)
+        public int ProjectPhaseId { get; set; }            
         public ProjectPhase ProjectPhase { get; set; }
-     
+        public Guid MaterialId { get; set; }   
+        public Material Material {   get; set;  }
+      
+    
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,5 +11,9 @@ namespace ERP.Application.Interfaces.Repository
     public interface IProjectPhaseRepository : IGenericRepository<ProjectPhase>
     {
         Task<ProjectPhase?> GetByProjectAndPhaseAsync(Guid projectId, int phaseId);
+        Task<ProjectPhase?> GetByIdWithInclude(int projectPhaseId, params Expression<Func<ProjectPhase, object>>[] Includes);
+        Task<bool> IsExistAsync(int projectPhaseId);
+        Task<ProjectPhase?> GetAllMaterialConsumptionsByProjectPhaseIdAsync(int projectPhaseId);
+      //  Task<ProjectPhase?> GetAllPhaseMaterialVarianceByProjectPhaseIdAsync(int projectPhaseId);
     }
 }

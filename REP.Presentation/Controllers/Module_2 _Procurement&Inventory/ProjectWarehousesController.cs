@@ -1,4 +1,5 @@
 ﻿using ERP.Application;
+using ERP.Application.Dtos.Module_2__Procurement_Inventory.MaterialConsumptionDtos;
 using ERP.Application.Dtos.Module_2__Procurement_Inventory.ProjectWarehouseDtos;
 using ERP.Application.Interfaces.Services.Module_2__Procurement_Inventory.ProjectWarehouseService.Command;
 using ERP.Application.Interfaces.Services.Module_2__Procurement_Inventory.ProjectWarehouseService.Query;
@@ -53,8 +54,14 @@ namespace ERP.Presentation.Controllers.Module_2__Procurement_Inventory
 
 
 
+        [HttpPost("computed")]
+        public async Task<ActionResult<GeneralResponse<int>>> AddToProjectWarehouse(RequestedMaterialConsumptionDto materialConsumptionDto)
+        {
+            var response = await _mediator.Send(new RecordMaterialConsumptionCommand(materialConsumptionDto));
 
+            return response.IsSuccess ? Ok(response):BadRequest(response.Message);
 
+        }
 
 
 

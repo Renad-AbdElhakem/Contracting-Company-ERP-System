@@ -23,5 +23,7 @@ namespace ERP.Domain.Model
         public ICollection<CompanyWarehouseStock>? CompanyWarehouseStocks { get; set; } = new List<CompanyWarehouseStock>();
         public ICollection<OrderMaterials>? OrderMaterials { get; set; } = new List<OrderMaterials>();
         public ICollection<MaterialPurchaseItem>? MaterialPurchaseItem { get; set; } = new List<MaterialPurchaseItem>();
+        public ICollection<MaterialConsumption>? MaterialConsumptions { get; set; } = new List<MaterialConsumption>();
+
     }
 }

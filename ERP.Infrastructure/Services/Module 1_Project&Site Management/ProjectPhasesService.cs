@@ -1,7 +1,11 @@
-﻿using ERP.Application;
+﻿using AutoMapper;
+using ERP.Application;
 using ERP.Application.Dtos.Module_1_Project_Site_Management;
+using ERP.Application.Dtos.Module_2__Procurement_Inventory.MaterialConsumptionDtos;
 using ERP.Application.Interfaces.Repository;
 using ERP.Application.Interfaces.Services.Module_1_Project_Site_Management;
+using ERP.Domain.Model._1_Project_Site_Management;
+using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,15 +14,17 @@ using System.Threading.Tasks;
 
 namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
 {
-    public class ProjectPhasesService: IProjectPhasesService
+    public class ProjectPhasesService : IProjectPhasesService
     {
         private readonly IProjectPhaseRepository _projectPhaseRepository;
+        private readonly IMapper _mapper;
 
-        public ProjectPhasesService(IProjectPhaseRepository projectPhaseRepository)
+        public ProjectPhasesService(IProjectPhaseRepository projectPhaseRepository, IMapper mapper)
         {
-             _projectPhaseRepository = projectPhaseRepository;
+            _projectPhaseRepository = projectPhaseRepository;
+            _mapper = mapper;
         }
-        public async Task<GeneralResponse<bool>> UpdateProjectPhaseDates( int projectPhaseId, UpdateProjectPhaseDatesDto dto)
+        public async Task<GeneralResponse<bool>> UpdateProjectPhaseDates(int projectPhaseId, UpdateProjectPhaseDatesDto dto)
         {
             var projectPhase = await _projectPhaseRepository.GetByIdAsync(projectPhaseId);
 
@@ -47,7 +53,7 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
                 return GeneralResponse<bool>.Fail("Project phase is already finished.");
 
             projectPhase.FinishedDate = DateOnly.FromDateTime(DateTime.UtcNow);
-          
+
             //R
             //projectPhase.ActualCost = dto.ActualCost;
 
@@ -76,5 +82,29 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
 
             return GeneralResponse<bool>.Success(true);
         }
+
+
+        public async Task<bool> IsExist(int projectPhaseId)
+        {
+            return await _projectPhaseRepository.IsExistAsync(projectPhaseId);
+        }
+
+        public async Task<ProjectPhasesDetailsDto> GetById(int projectPhaseId)
+        {
+            var projectPhase = await _projectPhaseRepository.GetByIdAsync(projectPhaseId);
+            return _mapper.Map<ProjectPhasesDetailsDto>(projectPhase);
+        }
+
+
+        public async Task<List<MaterialConsumptionDetailsDto>> GetConsumptionsByProjectPhaseId(int projectPhaseId)
+        {
+            var projectPhase = await _projectPhaseRepository.GetAllMaterialConsumptionsByProjectPhaseIdAsync(projectPhaseId);
+
+            return _mapper.Map<List<MaterialConsumptionDetailsDto>>(projectPhase.MaterialConsumptions);
+        }
+
+      
+
+
     }
 }

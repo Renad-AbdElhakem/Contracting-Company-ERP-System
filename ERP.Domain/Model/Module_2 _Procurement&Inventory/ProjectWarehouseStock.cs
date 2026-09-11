@@ -12,8 +12,10 @@ namespace ERP.Domain.Model.Module_2__Procurement_Inventory
         public int Id { get; set; }
 
         public decimal Quantity { get; set; }
+        public decimal RemainingQuantity { get; set; }
         public DateTime ArrivalDate { get; set; }
         public ReceivingStatus ReceivingStatus { get; set; }
+
 
         //Navigation
 
@@ -25,8 +27,8 @@ namespace ERP.Domain.Model.Module_2__Procurement_Inventory
 
         public int ReceivedByEmployeeId { get; set; }
         public Employee Employee { get; set; }
-        public int ?SourceCompanyWarehouseStockId { get; set; }
-        public CompanyWarehouseStock ?SourceCompanyWarehouseStock { get; set; }
+        public int? SourceCompanyWarehouseStockId { get; set; }
+        public CompanyWarehouseStock? SourceCompanyWarehouseStock { get; set; }
 
         public ICollection<MaterialConsumption>? MaterialConsumptions { get; set; } = new List<MaterialConsumption>();
     }

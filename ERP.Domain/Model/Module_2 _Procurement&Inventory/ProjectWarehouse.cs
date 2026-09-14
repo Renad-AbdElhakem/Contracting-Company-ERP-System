@@ -7,17 +7,19 @@ using System.Threading.Tasks;
 
 namespace ERP.Domain.Model
 {
-   public class ProjectWarehouse
+    public class ProjectWarehouse
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Location { get; set; } = string.Empty;
         public decimal? CapacitySquareMeters { get; set; }
+        public bool IsFull { get; set; } = false;
 
         //Navigation 
         public Guid ProjectId { get; set; }
         public Project Project { get; set; }
 
         public ICollection<ProjectWarehouseStock>? ProjectWarehouseStocks { get; set; } = new List<ProjectWarehouseStock>();
+        public ICollection<StockTransfer>? StockTransfers { get; set; } = new List<StockTransfer>();
     }
 }

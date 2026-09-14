@@ -35,10 +35,10 @@ namespace ERP.Presentation.Controllers.Module_2__Procurement_Inventory
 
             return !response.IsSuccess ? NotFound(response.Message) : Ok(response.Data);
         }
-        [HttpPost("{warehouseId}/stock")]
-        public async Task<ActionResult<GeneralResponse<int>>> AddToProjectWarehouse(int warehouseId, AddProjectWarehouseStockDto stockDto)
+        [HttpPost("{orderRequestId}/stock")]
+        public async Task<ActionResult<GeneralResponse<int>>> AddToProjectWarehouse(int orderRequestId, AddProjectWarehouseStockDto stockDto)
         {
-            var response = await _mediator.Send(new AddStockToProjectWarehouseCommand(warehouseId, stockDto));
+            var response = await _mediator.Send(new AddStockToProjectWarehouseCommand(orderRequestId, stockDto));
 
             return !response.IsSuccess ? BadRequest(response.Message) : Ok(response);
         }
@@ -59,11 +59,17 @@ namespace ERP.Presentation.Controllers.Module_2__Procurement_Inventory
         {
             var response = await _mediator.Send(new RecordMaterialConsumptionCommand(materialConsumptionDto));
 
-            return response.IsSuccess ? Ok(response):BadRequest(response.Message);
+            return response.IsSuccess ? Ok(response) : BadRequest(response.Message);
 
         }
 
+        [HttpPatch("{warehouseId}/FullWarehous")]
+        public async Task<ActionResult<GeneralResponse<bool>>> FullProjectWarehouse(int warehouseId)
+        {
+            var response = await _mediator.Send(new MarkProjectWarehouseAsFullCommand(warehouseId));
 
+            return response.IsSuccess ? Ok(response) : NotFound(response.Message);
+        }
 
 
 

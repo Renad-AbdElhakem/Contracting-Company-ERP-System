@@ -21,14 +21,16 @@ namespace ERP.Domain.Model.Module_2__Procurement_Inventory
 
         public int ProjectWarehouseId { get; set; }
         public ProjectWarehouse ProjectWarehouse { get; set; }
-
+      
+        public int StockTransferId { get; set; }           
+        public StockTransfer StockTransfer { get; set; }
+     
         public Guid MaterialId { get; set; }
         public Material Material { get; set; }
 
         public int ReceivedByEmployeeId { get; set; }
         public Employee Employee { get; set; }
-        public int? SourceCompanyWarehouseStockId { get; set; }
-        public CompanyWarehouseStock? SourceCompanyWarehouseStock { get; set; }
+
 
         public ICollection<MaterialConsumption>? MaterialConsumptions { get; set; } = new List<MaterialConsumption>();
     }

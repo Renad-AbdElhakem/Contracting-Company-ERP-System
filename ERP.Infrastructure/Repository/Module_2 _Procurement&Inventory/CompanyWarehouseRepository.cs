@@ -1,5 +1,6 @@
 ﻿using ERP.Application.Interfaces.Repository.Module_2__Procurement_Inventory;
 using ERP.Domain.Model;
+using ERP.Domain.Model.Module_2__Procurement_Inventory;
 using ERP.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -37,6 +38,21 @@ namespace ERP.Infrastructure.Repository.Module_2__Procurement_Inventory
                 .Include(w => w.CompanyWarehouseStocks)
                 .ThenInclude(e => e.Employee)
                 .FirstOrDefaultAsync(w => w.Id == warehouseId);
+        }
+
+        public async Task<List<CompanyWarehouseStock>> GetCompanyStockByMaterialsIdsAsync(List<Guid> materialsId)
+        {
+
+            var materialsAtStock = _context.CompanyWarehouseStocks.AsQueryable();
+
+            foreach (var materialId in materialsId)
+            {
+                materialsAtStock = materialsAtStock.Where(m => m.MaterialId == materialId);
+            }
+
+            return await materialsAtStock.ToListAsync();
+
+
         }
     }
 }

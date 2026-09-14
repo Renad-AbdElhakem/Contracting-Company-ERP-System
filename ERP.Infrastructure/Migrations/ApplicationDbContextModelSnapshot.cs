@@ -603,7 +603,7 @@ namespace ERP.Infrastructure.Migrations
                     b.Property<decimal>("RemainingQuantity")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("SourceCompanyWarehouseStockId")
+                    b.Property<int>("StockTransferId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -614,9 +614,49 @@ namespace ERP.Infrastructure.Migrations
 
                     b.HasIndex("ReceivedByEmployeeId");
 
-                    b.HasIndex("SourceCompanyWarehouseStockId");
+                    b.HasIndex("StockTransferId");
 
                     b.ToTable("ProjectWarehouseStocks");
+                });
+
+            modelBuilder.Entity("ERP.Domain.Model.Module_2__Procurement_Inventory.StockTransfer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CompanyWarehouseStockId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("OrderMaterialId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ProjectWarehouseId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("ReceivedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("SentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyWarehouseStockId");
+
+                    b.HasIndex("OrderMaterialId");
+
+                    b.HasIndex("ProjectWarehouseId");
+
+                    b.ToTable("StockTransfers");
                 });
 
             modelBuilder.Entity("ERP.Domain.Model.Module_2___Procurement___Inventory.PhaseMaterialRequirement", b =>
@@ -854,9 +894,6 @@ namespace ERP.Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -875,9 +912,9 @@ namespace ERP.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployeeId");
-
                     b.HasIndex("ProjectId");
+
+                    b.HasIndex("RequestByEmployeeId");
 
                     b.ToTable("ProjectOrderRequests");
                 });
@@ -892,6 +929,9 @@ namespace ERP.Infrastructure.Migrations
 
                     b.Property<decimal?>("CapacitySquareMeters")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsFull")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Location")
                         .IsRequired()
@@ -1336,10 +1376,11 @@ namespace ERP.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ERP.Domain.Model.Module_2__Procurement_Inventory.CompanyWarehouseStock", "SourceCompanyWarehouseStock")
-                        .WithMany("ProjectWarehouseStocks")
-                        .HasForeignKey("SourceCompanyWarehouseStockId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                    b.HasOne("ERP.Domain.Model.Module_2__Procurement_Inventory.StockTransfer", "StockTransfer")
+                        .WithMany()
+                        .HasForeignKey("StockTransferId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Employee");
 
@@ -1347,7 +1388,34 @@ namespace ERP.Infrastructure.Migrations
 
                     b.Navigation("ProjectWarehouse");
 
-                    b.Navigation("SourceCompanyWarehouseStock");
+                    b.Navigation("StockTransfer");
+                });
+
+            modelBuilder.Entity("ERP.Domain.Model.Module_2__Procurement_Inventory.StockTransfer", b =>
+                {
+                    b.HasOne("ERP.Domain.Model.Module_2__Procurement_Inventory.CompanyWarehouseStock", "CompanyWarehouseStock")
+                        .WithMany("StockTransfers")
+                        .HasForeignKey("CompanyWarehouseStockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Domain.Model.Module_2__Procurement_Inventory.OrderMaterials", "OrderMaterial")
+                        .WithMany()
+                        .HasForeignKey("OrderMaterialId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Domain.Model.ProjectWarehouse", "ProjectWarehouse")
+                        .WithMany("StockTransfers")
+                        .HasForeignKey("ProjectWarehouseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CompanyWarehouseStock");
+
+                    b.Navigation("OrderMaterial");
+
+                    b.Navigation("ProjectWarehouse");
                 });
 
             modelBuilder.Entity("ERP.Domain.Model.Module_2___Procurement___Inventory.PhaseMaterialRequirement", b =>
@@ -1461,15 +1529,15 @@ namespace ERP.Infrastructure.Migrations
 
             modelBuilder.Entity("ERP.Domain.Model.ProjectOrderRequest", b =>
                 {
-                    b.HasOne("ERP.Domain.Model.Employee", "Employee")
-                        .WithMany("ProjectOrderRequests")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ERP.Domain.Model.Project", "Project")
                         .WithMany("ProjectOrderRequests")
                         .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Domain.Model.Employee", "Employee")
+                        .WithMany("ProjectOrderRequests")
+                        .HasForeignKey("RequestByEmployeeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1632,7 +1700,7 @@ namespace ERP.Infrastructure.Migrations
 
             modelBuilder.Entity("ERP.Domain.Model.Module_2__Procurement_Inventory.CompanyWarehouseStock", b =>
                 {
-                    b.Navigation("ProjectWarehouseStocks");
+                    b.Navigation("StockTransfers");
                 });
 
             modelBuilder.Entity("ERP.Domain.Model.Module_2__Procurement_Inventory.ProjectWarehouseStock", b =>
@@ -1670,6 +1738,8 @@ namespace ERP.Infrastructure.Migrations
             modelBuilder.Entity("ERP.Domain.Model.ProjectWarehouse", b =>
                 {
                     b.Navigation("ProjectWarehouseStocks");
+
+                    b.Navigation("StockTransfers");
                 });
 
             modelBuilder.Entity("ERP.Domain.Model.Role", b =>

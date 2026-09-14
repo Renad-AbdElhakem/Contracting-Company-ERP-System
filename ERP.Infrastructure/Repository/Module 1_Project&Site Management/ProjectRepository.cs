@@ -45,6 +45,13 @@ namespace ERP.Infrastructure.Repository.Module_1_Project_Site_Management
                 .FirstOrDefaultAsync(p => p.Id == projectId);
         }
 
-
+        public async Task<Project?> GetProjectWithOrderRequestsAsync(Guid projectId)
+        {
+            return await _dbSet
+                .Include(x => x.ProjectOrderRequests)
+                    .ThenInclude(x => x.OrderMaterials)
+                        .ThenInclude(x => x.Material)
+                .FirstOrDefaultAsync(x => x.Id == projectId);
+        }
     }
 }

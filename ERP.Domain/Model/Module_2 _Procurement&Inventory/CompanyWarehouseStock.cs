@@ -24,6 +24,7 @@ namespace ERP.Domain.Model.Module_2__Procurement_Inventory
         public Guid ?MaterialPurchaseItemId { get; set; }
         public MaterialPurchaseItem? MaterialPurchaseItem { get; set; }
 
-        public ICollection<ProjectWarehouseStock>? ProjectWarehouseStocks { get; set; } = new List<ProjectWarehouseStock>();
+    
+        public ICollection<StockTransfer>?  StockTransfers { get; set; } = new List<StockTransfer>();
     }
 }

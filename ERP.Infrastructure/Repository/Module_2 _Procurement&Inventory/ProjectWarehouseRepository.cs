@@ -17,7 +17,7 @@ namespace ERP.Infrastructure.Repository.Module_2__Procurement_Inventory
 
         public ProjectWarehouseRepository(ApplicationDbContext context) : base(context)
         {
-           _context = context;
+            _context = context;
         }
 
         public async Task<ProjectWarehouse?> GetByIdWithInclude(int projectwarehouseId, params Expression<Func<ProjectWarehouse, object>>[] Includes)
@@ -30,6 +30,10 @@ namespace ERP.Infrastructure.Repository.Module_2__Procurement_Inventory
             }
 
             return await query.FirstOrDefaultAsync(p => p.Id == projectwarehouseId);
+        }
+        public async Task<ProjectWarehouse?> GetByIdWithCondition( Expression<Func<ProjectWarehouse, bool>> condition)
+        {
+            return await _dbSet.FirstOrDefaultAsync(condition);
         }
         public async Task<ProjectWarehouse?> GetByIdWithStockAsync(int warehouseId)
         {

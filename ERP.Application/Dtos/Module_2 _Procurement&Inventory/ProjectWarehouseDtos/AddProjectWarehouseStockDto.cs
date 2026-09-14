@@ -8,9 +8,10 @@ namespace ERP.Application.Dtos.Module_2__Procurement_Inventory.ProjectWarehouseD
 {
     public class AddProjectWarehouseStockDto
     {
+        public int ProjectWarehouseId { get; set; }
         public Guid MaterialId { get; set; }
         public decimal Quantity { get; set; }
         public int ReceivedByEmployeeId { get; set; }
-        public int SourceCompanyWarehouseStockId { get; set; }
+        public int StockTransferId { get; set; }
     }
 }

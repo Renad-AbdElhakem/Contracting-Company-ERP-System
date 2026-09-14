@@ -1,4 +1,5 @@
 ﻿using ERP.Domain.Model;
+using ERP.Domain.Model.Module_2__Procurement_Inventory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace ERP.Application.Interfaces.Repository.Module_2__Procurement_Inventory
     {
         Task<CompanyWarehouse?> GetByIdWithInclude(int companywarehouseId, params Expression<Func<CompanyWarehouse, object>>[] Includes);
         Task<CompanyWarehouse?> GetByIdWithStockAsync(int warehouseId);
+        Task<List<CompanyWarehouseStock>> GetCompanyStockByMaterialsIdsAsync(List<Guid> materialsId);
 
 
     }

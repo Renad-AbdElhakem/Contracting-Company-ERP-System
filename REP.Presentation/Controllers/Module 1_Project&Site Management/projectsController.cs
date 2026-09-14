@@ -1,8 +1,10 @@
 ﻿using ERP.Application;
 using ERP.Application.Dtos.Module_1_Project_Site_Management;
+using ERP.Application.Dtos.Module_2__Procurement_Inventory.ProjectOrderRequestDtos;
 using ERP.Application.Dtos.Module_2__Procurement_Inventory.ProjectWarehouseDtos;
 using ERP.Application.Dtos.Module_3___Equipment_Machinery;
 using ERP.Application.Interfaces.Services.Module_1_Project_Site_Management;
+using ERP.Application.Interfaces.Services.Module_2__Procurement_Inventory.ProjectOrderRequestService.Query;
 using ERP.Application.Interfaces.Services.Module_2__Procurement_Inventory.ProjectWarehouseService.Command;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -17,10 +19,10 @@ namespace ERP.Presentation.Controllers.Module_1_Project_Site_Management
         private readonly IProjectService _projectService;
         private readonly IMediator _mediator;
 
-        public projectsController(IProjectService projectService,IMediator mediator)
+        public projectsController(IProjectService projectService, IMediator mediator)
         {
             _projectService = projectService;
-           _mediator = mediator;
+            _mediator = mediator;
         }
 
 
@@ -149,7 +151,7 @@ namespace ERP.Presentation.Controllers.Module_1_Project_Site_Management
         {
             var result = await _projectService.AssignEquipmentToProject(projectId, dto);
 
-            return result.IsSuccess ? Ok(result.Data):BadRequest(result.Message);   
+            return result.IsSuccess ? Ok(result.Data) : BadRequest(result.Message);
         }
 
 
@@ -159,16 +161,16 @@ namespace ERP.Presentation.Controllers.Module_1_Project_Site_Management
         {
             var result = await _projectService.GetAllEquipmentByProjectId(projectId);
 
-            return result.IsSuccess ? Ok(result.Data) :NotFound(result.Message);
+            return result.IsSuccess ? Ok(result.Data) : NotFound(result.Message);
         }
 
 
         [HttpPost("{projectId}/warehouses")]
         public async Task<ActionResult<GeneralResponse<int>>> AssignProjectWarehouseToProject(Guid projectId, AddProjectWarehouseDto dto)
         {
-            var response = await _mediator.Send(new AddWarehouseToProjectCommand(projectId,dto));
+            var response = await _mediator.Send(new AddWarehouseToProjectCommand(projectId, dto));
 
-            return response.IsSuccess ? Ok(response.Data):BadRequest(response.Message);   
+            return response.IsSuccess ? Ok(response.Data) : BadRequest(response.Message);
         }
 
         [HttpGet("{projectId}/warehouses")]
@@ -176,9 +178,22 @@ namespace ERP.Presentation.Controllers.Module_1_Project_Site_Management
         {
             var result = await _mediator.Send(new GetProjectWarehousesQuery(projectId));
 
-            return result.IsSuccess ? Ok(result.Data) :NotFound(result.Message);
+            return result.IsSuccess ? Ok(result.Data) : NotFound(result.Message);
         }
 
+        [HttpPost("{projectId}/orderrequests")]
+        public async Task<ActionResult<GeneralResponse<int>>> CreateProjectOrderRequest(Guid projectId, CreateProjectOrderRequestDto orderRequestDto)
+        {
+            var response = await _projectService.CreateProjectOrderRequestAsync(projectId, orderRequestDto);
 
+            return response.IsSuccess ? Ok(response) : BadRequest(response.Message);
+        }
+        [HttpGet("{projectId}/orderrequests")]
+        public async Task<IActionResult> GetOrderRequestsByProject(Guid projectId)
+        {
+            var result = await _mediator.Send(new GetOrderRequestsByProjectQuery(projectId));
+
+            return Ok(result);
+        }
     }
 }

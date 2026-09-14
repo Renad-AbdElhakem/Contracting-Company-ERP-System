@@ -45,6 +45,7 @@ namespace ERP.Infrastructure.Persistence
         public DbSet<MaterialConsumption> MaterialConsumptions { get; set; }
         public DbSet<ProjectOrderRequest> ProjectOrderRequests { get; set; }
         public DbSet<OrderMaterials> OrderMaterials { get; set; }
+        public DbSet<StockTransfer>   StockTransfers { get; set; }
 
         // Module 3 — Equipment / Machinery
         public DbSet<Equipment> Equipment { get; set; }

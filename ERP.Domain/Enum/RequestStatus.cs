@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace ERP.Domain.Enum
 {
-   public enum RequestStatus
+    public enum RequestStatus
     {
         Pending = 1,
-        Approved= 2,
+        Approved = 2,
         Rejected = 3,
-        UnderReview= 4,
-
+        UnderReview = 4,
+        Cancelled = 5,
     }
 }

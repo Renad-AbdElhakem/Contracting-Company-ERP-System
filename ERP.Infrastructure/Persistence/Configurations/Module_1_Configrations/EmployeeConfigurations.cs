@@ -29,6 +29,13 @@ namespace ERP.Infrastructure.Persistence.Configurations.Module_1_Configrations
                    .WithOne(me => me.Employee)
                    .HasForeignKey(me => me.EmployeeId)
                    .OnDelete(DeleteBehavior.Restrict);
+            
+        
+            builder.HasMany(x => x.ProjectOrderRequests)
+                   .WithOne(me => me.Employee)
+                   .HasForeignKey(me => me.RequestByEmployeeId)
+                   .OnDelete(DeleteBehavior.Restrict);
+            
         }
     }
 }

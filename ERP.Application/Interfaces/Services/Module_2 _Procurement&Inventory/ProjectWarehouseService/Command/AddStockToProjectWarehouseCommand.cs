@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace ERP.Application.Interfaces.Services.Module_2__Procurement_Inventory.ProjectWarehouseService.Command
 {
-    public record AddStockToProjectWarehouseCommand(int warehouseId, AddProjectWarehouseStockDto StockDto): IRequest<GeneralResponse<int>>;
+    public record AddStockToProjectWarehouseCommand(int orderRequestId, AddProjectWarehouseStockDto StockDto): IRequest<GeneralResponse<int>>;
 }

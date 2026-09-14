@@ -1,8 +1,11 @@
 ﻿using ERP.Application.Dtos.Module_1_Project_Site_Management;
+using ERP.Application.Dtos.Module_2__Procurement_Inventory.ProjectOrderRequestDtos;
 using ERP.Application.Dtos.Module_3___Equipment_Machinery;
+using ERP.Domain.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,7 +37,8 @@ namespace ERP.Application.Interfaces.Services.Module_1_Project_Site_Management
 
         Task<GeneralResponse<int>> AssignEquipmentToProject(Guid projectId, AssignProjectEquipment dto);
         Task<GeneralResponse<List<ProjectEquipmentDto>>> GetAllEquipmentByProjectId(Guid projectId);
-
+      //  Task<GeneralResponse<Project>> GetProjectWithInclude(Guid projectId, params Expression<Func<Project, object>>[] Includes);
+        Task<GeneralResponse<int>> CreateProjectOrderRequestAsync(Guid projectId, CreateProjectOrderRequestDto orderRequestDto);
 
     }
 }

@@ -24,4 +24,8 @@
     <ProjectReference Include="..\ERP.Domain\ERP.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\Module_2 _Procurement&amp;Inventory\StockTransferHandler\QueryHandler\" />
+  </ItemGroup>
+
 </Project>

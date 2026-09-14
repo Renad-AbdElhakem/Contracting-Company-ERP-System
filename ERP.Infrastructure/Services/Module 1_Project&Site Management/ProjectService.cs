@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using ERP.Application;
 using ERP.Application.Dtos.Module_1_Project_Site_Management;
+using ERP.Application.Dtos.Module_2__Procurement_Inventory.ProjectOrderRequestDtos;
 using ERP.Application.Dtos.Module_3___Equipment_Machinery;
 using ERP.Application.Interfaces.Repository;
 using ERP.Application.Interfaces.Repository.Module_1_Project_Site_Management;
@@ -10,11 +12,13 @@ using ERP.Application.Interfaces.Services.Module_3___Equipment_Machinery;
 using ERP.Domain.Enum;
 using ERP.Domain.Model;
 using ERP.Domain.Model._1_Project_Site_Management;
+using ERP.Domain.Model.Module_2__Procurement_Inventory;
 using ERP.Domain.Model.Module_3___Equipment_Machinery;
 using ERP.Infrastructure.Repository.Module_1_Project_Site_Management;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -33,19 +37,19 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
         private readonly IProjectEquipmentService _projectEquipmentService;
 
         public ProjectService(IProjectRepository projectRepository, IClientService clientService
-                                , IMapper mapper,IPhaseService phaseService, IEmployeeService employeeService
+                                , IMapper mapper, IPhaseService phaseService, IEmployeeService employeeService
                                 , IProjectEmployeeRepository projectEmployeeRepository, IProjectPhaseRepository phaseRepository
-                                , IEquipmentService equipmentService,IProjectEquipmentService projectEquipmentService)
+                                , IEquipmentService equipmentService, IProjectEquipmentService projectEquipmentService)
         {
             _projectRepository = projectRepository;
             _clientService = clientService;
             _mapper = mapper;
-           _phaseService = phaseService;
+            _phaseService = phaseService;
             _employeeService = employeeService;
             _projectEmployeeRepository = projectEmployeeRepository;
             _projectPhaseRepository = phaseRepository;
             _equipmentService = equipmentService;
-           _projectEquipmentService = projectEquipmentService;
+            _projectEquipmentService = projectEquipmentService;
         }
 
 
@@ -66,20 +70,20 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
         public async Task<GeneralResponse<bool>> FinishProjectAsync(Guid projectId)
         {
             var project = await _projectRepository.GetByIdAsync(projectId);
-           
+
             if (project is null)
                 return GeneralResponse<bool>.Fail($"Project with id {projectId} not found");
 
-          var response=  await _projectEquipmentService.UnassignEquipmentAsync(projectId);
-            
+            var response = await _projectEquipmentService.UnassignEquipmentAsync(projectId);
+
             if (!response.IsSuccess)
                 return GeneralResponse<bool>.Fail(response.Message);
 
             project.Status = ProjectStatus.Completed;
             project.ActualEndDate = DateOnly.FromDateTime(DateTime.UtcNow);
-            
+
             await _projectRepository.UpdateAsync(project);
-            
+
             return GeneralResponse<bool>.Success(true);
 
         }
@@ -259,8 +263,8 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
             if (project is null)
                 return GeneralResponse<int>.Fail($"Project with id {projectId} not found.");
 
-            var existingPhase= await _phaseService.GetPhaseByIdAsync(dto.PhaseId);
-         
+            var existingPhase = await _phaseService.GetPhaseByIdAsync(dto.PhaseId);
+
             if (!existingPhase.IsSuccess)
                 return GeneralResponse<int>.Fail($"Phase with id {dto.PhaseId} not found.");
 
@@ -288,10 +292,10 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
 
 
             var equipment = await _equipmentService.GetEquipmentById(dto.EquipmentId);
-            
+
             if (!equipment.IsSuccess)
                 return GeneralResponse<int>.Fail(equipment.Message);
-            
+
             if (equipment.Data.EquipmentStatus != EquipmentStatus.Available)
                 return GeneralResponse<int>.Fail($"Equipment is not available. Current status: {equipment.Data.EquipmentStatus}.");
 
@@ -323,6 +327,56 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
 
         }
 
+        //public async Task<GeneralResponse<Project>> GetProjectWithInclude(Guid projectId, params Expression<Func<Project, object>>[] Includes)
+        //{
+        //    var projectOrderRequestDetails = await _projectRepository.GetByIdWithInclude(projectId, Includes);
+        //    return GeneralResponse<Project>.Success(projectOrderRequestDetails);
+        //}
+
+        public async Task<GeneralResponse<int>> CreateProjectOrderRequestAsync(Guid projectId, CreateProjectOrderRequestDto orderRequestDto)
+        {
+            if (orderRequestDto is null || !orderRequestDto.orderMaterialsDtos.Any())
+                return GeneralResponse<int>.Fail("Order request must contain at least one material");
+
+            var project = await _projectRepository.GetByIdWithInclude(projectId, e => e.ProjectOrderRequests);
+
+            if (project == null)
+                return GeneralResponse<int>.Fail($"Project with id {projectId} not found");
+
+            if (project.ActualEndDate != null)
+                return GeneralResponse<int>.Fail($"Project with id {projectId} has already been completed");
+
+            if (project.Status is ProjectStatus.OnHold or ProjectStatus.Completed or ProjectStatus.Closed or ProjectStatus.Cancelled)
+                return GeneralResponse<int>.Fail($"Cannot create order for project with status {project.Status}");
+
+            var employee = await _employeeService.GetByIdAsync(orderRequestDto.RequestByEmployeeId);
+
+            if (employee == null)
+                return GeneralResponse<int>.Fail($"Employee with id {orderRequestDto.RequestByEmployeeId} not found");
+
+            if (employee.TerminationDate != null)
+                return GeneralResponse<int>.Fail($"Employee with id {orderRequestDto.RequestByEmployeeId} is terminated");
+
+            if (employee.Status != EmployeeStatus.Active)
+                return GeneralResponse<int>.Fail($"Employee is {employee.Status}"); ;
+
+
+            var orderRequest = _mapper.Map<ProjectOrderRequest>(orderRequestDto);
+
+            orderRequest.RequestDate = DateOnly.FromDateTime(DateTime.Now);
+            orderRequest.Status = RequestStatus.Pending;
+            orderRequest.ProjectId = projectId;
+
+            var materialsOrdered = _mapper.Map<List<OrderMaterials>>(orderRequestDto.orderMaterialsDtos);
+          
+            orderRequest.OrderMaterials = materialsOrdered;
+
+            project.ProjectOrderRequests.Add(orderRequest);
+
+           await _projectRepository.UpdateAsync(project);
+
+            return GeneralResponse<int>.Success(orderRequest.Id, "Order request created ");
+        }
 
     }
 }

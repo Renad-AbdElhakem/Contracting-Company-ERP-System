@@ -327,12 +327,6 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
 
         }
 
-        //public async Task<GeneralResponse<Project>> GetProjectWithInclude(Guid projectId, params Expression<Func<Project, object>>[] Includes)
-        //{
-        //    var projectOrderRequestDetails = await _projectRepository.GetByIdWithInclude(projectId, Includes);
-        //    return GeneralResponse<Project>.Success(projectOrderRequestDetails);
-        //}
-
         public async Task<GeneralResponse<int>> CreateProjectOrderRequestAsync(Guid projectId, CreateProjectOrderRequestDto orderRequestDto)
         {
             if (orderRequestDto is null || !orderRequestDto.orderMaterialsDtos.Any())

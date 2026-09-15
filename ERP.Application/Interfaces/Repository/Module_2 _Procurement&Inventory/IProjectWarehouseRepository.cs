@@ -13,5 +13,6 @@ namespace ERP.Application.Interfaces.Repository.Module_2__Procurement_Inventory
         Task<ProjectWarehouse?> GetByIdWithInclude(int projectwarehouseId, params Expression<Func<ProjectWarehouse, object>>[] Includes);
         Task<ProjectWarehouse?> GetByIdWithStockAsync(int warehouseId);
         Task<ProjectWarehouse?> GetByIdWithCondition(Expression<Func<ProjectWarehouse, bool>> condition);
+        Task<decimal> GetTotalQuantityByOrderMaterialId(Guid orderMaterialId);
     }
 }

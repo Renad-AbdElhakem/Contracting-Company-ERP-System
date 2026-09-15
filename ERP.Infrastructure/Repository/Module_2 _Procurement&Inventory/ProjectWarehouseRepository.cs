@@ -31,7 +31,7 @@ namespace ERP.Infrastructure.Repository.Module_2__Procurement_Inventory
 
             return await query.FirstOrDefaultAsync(p => p.Id == projectwarehouseId);
         }
-        public async Task<ProjectWarehouse?> GetByIdWithCondition( Expression<Func<ProjectWarehouse, bool>> condition)
+        public async Task<ProjectWarehouse?> GetByIdWithCondition(Expression<Func<ProjectWarehouse, bool>> condition)
         {
             return await _dbSet.FirstOrDefaultAsync(condition);
         }
@@ -41,6 +41,14 @@ namespace ERP.Infrastructure.Repository.Module_2__Procurement_Inventory
                 .Include(w => w.ProjectWarehouseStocks)
                 .ThenInclude(e => e.Employee)
                 .FirstOrDefaultAsync(w => w.Id == warehouseId);
+        }
+      
+        public async Task<decimal> GetTotalQuantityByOrderMaterialId(Guid orderMaterialId)
+        {
+            return await _dbSet
+                .SelectMany(pw => pw.ProjectWarehouseStocks)
+                .Where(s => s.StockTransfer.OrderMaterialId == orderMaterialId)
+                .SumAsync(s => s.Quantity);
         }
     }
 }

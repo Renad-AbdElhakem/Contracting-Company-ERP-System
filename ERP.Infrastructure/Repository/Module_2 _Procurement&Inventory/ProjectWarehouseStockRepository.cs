@@ -41,6 +41,7 @@ namespace ERP.Infrastructure.Repository.Module_2__Procurement_Inventory
         {
             return await _dbSet.AnyAsync(s => s.MaterialId == materialId);
         }
+
     }
 
 }

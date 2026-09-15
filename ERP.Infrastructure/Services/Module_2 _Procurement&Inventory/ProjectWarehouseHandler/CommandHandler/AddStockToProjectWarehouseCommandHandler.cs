@@ -23,7 +23,7 @@ namespace ERP.Infrastructure.Services.Module_2__Procurement_Inventory.ProjectWar
         private readonly IMaterialRepository _materialRepository;
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IMediator _mediator;
-      
+
 
         public AddStockToProjectWarehouseCommandHandler(IMapper mapper, IProjectWarehouseRepository warehouseRepository,
                                                          IMaterialRepository materialRepository,
@@ -40,7 +40,7 @@ namespace ERP.Infrastructure.Services.Module_2__Procurement_Inventory.ProjectWar
         {
 
             var orderRequested = await _mediator.Send(new GetOrderRequestByIdQuery(request.orderRequestId));
-          
+
             if (!orderRequested.IsSuccess)
                 return GeneralResponse<int>.Fail(orderRequested.Message);
 
@@ -72,13 +72,15 @@ namespace ERP.Infrastructure.Services.Module_2__Procurement_Inventory.ProjectWar
 
             var checkOrderMaterialQuantity = orderRequested.Data.OrderMaterials.FirstOrDefault(m => m.MaterialId == request.StockDto.MaterialId);
 
+            var totalQuantityAtPojectStock = await _warehouseRepository
+                                            .GetTotalQuantityByOrderMaterialId(checkOrderMaterialQuantity.Id);
+
             stock.RemainingQuantity = request.StockDto.Quantity;
             stock.ArrivalDate = DateTime.Now;
             stock.StockTransferId = request.StockDto.StockTransferId;
 
-            stock.ReceivingStatus = checkOrderMaterialQuantity.Quantity > request.StockDto.Quantity ?
-                                                       ReceivingStatus.Shortage : ReceivingStatus.Matched;
-
+            stock.ReceivingStatus = checkOrderMaterialQuantity.Quantity == (request.StockDto.Quantity + totalQuantityAtPojectStock) ?
+                                                      ReceivingStatus.Matched : ReceivingStatus.Shortage;
 
             warehouse.ProjectWarehouseStocks.Add(stock);
 

@@ -14,7 +14,7 @@ namespace ERP.Infrastructure.Persistence.Configurations.Module_4_Finance
         public void Configure(EntityTypeBuilder<MaterialPurchase> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.Property(x => x.TotalAmount).HasPrecision(18, 2);
+            builder.Property(x => x.TotalPrice).HasPrecision(18, 2);
 
             builder.HasOne(x => x.Supplier)
                    .WithMany(s => s.MaterialPurchases)

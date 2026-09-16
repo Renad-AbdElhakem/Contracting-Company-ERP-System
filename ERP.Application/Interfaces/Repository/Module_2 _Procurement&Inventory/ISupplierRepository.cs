@@ -10,5 +10,6 @@ namespace ERP.Application.Interfaces.Repository.Module_2__Procurement_Inventory
     public interface ISupplierRepository : IGenericRepository<Supplier>
     {
         IQueryable<Supplier> GetAllSupplier();
+        Task<List<MaterialPurchase>> GetMaterialPurchaseDetailsBySupplierId(int supplierId);
     }
 }

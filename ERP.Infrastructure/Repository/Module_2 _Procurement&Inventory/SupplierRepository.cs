@@ -26,7 +26,15 @@ namespace ERP.Infrastructure.Repository.Module_2__Procurement_Inventory
             return _dbContext.Suppliers.AsQueryable();
         }
 
+        public async Task<List<MaterialPurchase>> GetMaterialPurchaseDetailsBySupplierId(int supplierId)
+        {
+            return await _dbSet
+                .Where(s => s.Id == supplierId)
+                .SelectMany(s => s.MaterialPurchases)
+                .Include(p => p.MaterialPurchaseItems)
+                .Include(p => p.Payments)
+                .ToListAsync();
+        }
 
-       
     }
 }

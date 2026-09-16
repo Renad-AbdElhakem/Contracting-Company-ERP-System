@@ -1,7 +1,9 @@
 ﻿using ERP.Application;
 using ERP.Application.Dtos.Module_2__Procurement_Inventory.SupplierDtos;
+using ERP.Application.Dtos.Module_4___Finance.MaterialPurchaseDtos;
 using ERP.Application.Interfaces.Services.Module_2__Procurement_Inventory.SupplierService.Command;
 using ERP.Application.Interfaces.Services.Module_2__Procurement_Inventory.SupplierService.Queries;
+using ERP.Application.Interfaces.Services.Module_4___Finance.MaterialPurchaseService.Command;
 using ERP.Infrastructure.Services.Module_2__Procurement_Inventory.SupplierHandler;
 using ERP.Infrastructure.Services.Module_2__Procurement_Inventory.SupplierHandler.QueryHandler;
 using MediatR;
@@ -40,7 +42,7 @@ namespace ERP.Presentation.Controllers.Module_2__Procurement_Inventory
             return response.IsSuccess ? Ok(response.Data) : NotFound(response.Message);
         }
 
-       
+
         [HttpGet]
         public async Task<ActionResult<GeneralResponse<List<SupplierDto>>>> GetAllBy()
         {
@@ -80,6 +82,24 @@ namespace ERP.Presentation.Controllers.Module_2__Procurement_Inventory
             var suppliers = await _mediator.Send(new GetSupplierMaterialPricesQuery(supplierId));
             return Ok(suppliers.Data);
         }
-           
+
+        [HttpPost("{supplierId}/materialpurchases")]
+        public async Task<ActionResult> CreateMaterialPurchase(int supplierId, CreateMaterialPurchaseDto createMaterialPurchaseDto)
+        {
+            var response = await _mediator.Send(new CreateMaterialPurchaseCommand(supplierId, createMaterialPurchaseDto));
+        
+            return response.IsSuccess?Ok(response.Data): BadRequest(response.Message);
+        
         }
+
+
+        [HttpGet("{supplierId}/materialpurchases")]
+        public async Task<ActionResult<GeneralResponse<List<MaterialPurchaseDto>>>> GetMaterialPurchasesBySupplier(int supplierId)
+        {
+            var response = await _mediator.Send(new GetMaterialPurchasesBySupplierQuery(supplierId));
+
+            return Ok(response);
+        }
+
     }
+}

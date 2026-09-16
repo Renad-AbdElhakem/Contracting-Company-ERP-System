@@ -18,8 +18,6 @@ namespace ERP.Application.Interfaces.Services.Module_1_Project_Site_Management
         Task<GeneralResponse<bool>> CancelledProjectAsync(Guid projectId);
         Task<GeneralResponse<List<ProjectPhasesDetailsDto>>> GetProjectPhasesDetails(Guid projectId);
 
-        Task<GeneralResponse<ProjectContractDto>> GetProjectContractDetails(Guid projectId);
-
         Task<GeneralResponse<List<EmployeeSummaryDto>>> GetProjectEmployeesDetails(Guid projectId);
 
         Task<List<ProjectDetailsDto>> GetAllProjects();
@@ -37,8 +35,10 @@ namespace ERP.Application.Interfaces.Services.Module_1_Project_Site_Management
 
         Task<GeneralResponse<int>> AssignEquipmentToProject(Guid projectId, AssignProjectEquipment dto);
         Task<GeneralResponse<List<ProjectEquipmentDto>>> GetAllEquipmentByProjectId(Guid projectId);
-      //  Task<GeneralResponse<Project>> GetProjectWithInclude(Guid projectId, params Expression<Func<Project, object>>[] Includes);
+     
         Task<GeneralResponse<int>> CreateProjectOrderRequestAsync(Guid projectId, CreateProjectOrderRequestDto orderRequestDto);
+        Task<GeneralResponse<Project>> GetProjectWithInclude(Guid projectId, params Expression<Func<Project, object>>[] Includes);
+        Task UpdateAsync(Project project);
 
     }
 }

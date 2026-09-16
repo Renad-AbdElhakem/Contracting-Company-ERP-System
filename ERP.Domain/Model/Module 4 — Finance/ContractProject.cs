@@ -26,7 +26,7 @@ namespace ERP.Domain.Model
 
         public Guid ProjectId { get; set; }
         public Project Project { get; set; }
-        public ICollection<ContractPaymentRecord>  ContractPaymentRecords { get; set; } = new List<ContractPaymentRecord>();
-        public ICollection<ContractInstallmentPlan>  ContractPaymentPlans { get; set; } = new List<ContractInstallmentPlan>();
+        public ICollection<ContractPaymentRecord>?  ContractPaymentRecords { get; set; } = new List<ContractPaymentRecord>();
+        public ICollection<ContractInstallmentPlan> ? ContractPaymentPlans { get; set; } = new List<ContractInstallmentPlan>();
     }
 }

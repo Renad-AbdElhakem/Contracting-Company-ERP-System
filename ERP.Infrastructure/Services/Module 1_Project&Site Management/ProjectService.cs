@@ -116,20 +116,7 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
 
         }
 
-        public async Task<GeneralResponse<ProjectContractDto>> GetProjectContractDetails(Guid projectId)
-        {
-            var projectContractDetails = await _projectRepository.GetByIdWithInclude(projectId, c => c.ContractProject, x => x.Client);
-
-            if (projectContractDetails is null)
-                return GeneralResponse<ProjectContractDto>.Fail($"Project with id {projectId} not found");
-
-            var projectWithContractDetailsDto = _mapper.Map<ProjectContractDto>(projectContractDetails);
-            projectWithContractDetailsDto.ClientId = projectContractDetails.ClientId;
-            projectWithContractDetailsDto.ClientName = projectContractDetails.Client.Name;
-
-            return GeneralResponse<ProjectContractDto>.Success(projectWithContractDetailsDto);
-
-        }
+      
 
         public async Task<GeneralResponse<List<EmployeeSummaryDto>>> GetProjectEmployeesDetails(Guid projectId)
         {
@@ -362,15 +349,25 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
             orderRequest.ProjectId = projectId;
 
             var materialsOrdered = _mapper.Map<List<OrderMaterials>>(orderRequestDto.orderMaterialsDtos);
-          
+
             orderRequest.OrderMaterials = materialsOrdered;
 
             project.ProjectOrderRequests.Add(orderRequest);
 
-           await _projectRepository.UpdateAsync(project);
+            await _projectRepository.UpdateAsync(project);
 
             return GeneralResponse<int>.Success(orderRequest.Id, "Order request created ");
         }
 
+        public async Task<GeneralResponse<Project>> GetProjectWithInclude(Guid projectId, params Expression<Func<Project, object>>[] Includes)
+        {
+            var project = await _projectRepository.GetByIdWithInclude(projectId, Includes);
+            return GeneralResponse<Project>.Success(project);
+        }
+
+        public async Task UpdateAsync(Project project)
+        {
+            await _projectRepository.UpdateAsync(project);
+        }
     }
 }

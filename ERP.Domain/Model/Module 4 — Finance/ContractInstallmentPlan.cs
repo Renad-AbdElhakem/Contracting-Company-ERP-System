@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ERP.Domain.Model.Module_4___Finance
 {
-   public class ContractInstallmentPlan
+    public class ContractInstallmentPlan
     {
         public int Id { get; set; }
         public int InstallmentNumber { get; set; }
@@ -16,5 +16,6 @@ namespace ERP.Domain.Model.Module_4___Finance
         // Navigation
         public Guid ContractId { get; set; }
         public ContractProject ContractProject { get; set; }
+      public  ICollection<ContractPaymentRecord>? ContractPaymentRecords { get; set; } = new List<ContractPaymentRecord>();
     }
 }

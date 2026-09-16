@@ -3,9 +3,12 @@ using ERP.Application.Dtos.Module_1_Project_Site_Management;
 using ERP.Application.Dtos.Module_2__Procurement_Inventory.ProjectOrderRequestDtos;
 using ERP.Application.Dtos.Module_2__Procurement_Inventory.ProjectWarehouseDtos;
 using ERP.Application.Dtos.Module_3___Equipment_Machinery;
+using ERP.Application.Dtos.Module_4___Finance.ContractDtos;
 using ERP.Application.Interfaces.Services.Module_1_Project_Site_Management;
 using ERP.Application.Interfaces.Services.Module_2__Procurement_Inventory.ProjectOrderRequestService.Query;
 using ERP.Application.Interfaces.Services.Module_2__Procurement_Inventory.ProjectWarehouseService.Command;
+using ERP.Application.Interfaces.Services.Module_4___Finance.ContractService.Command;
+using ERP.Application.Interfaces.Services.Module_4___Finance.ContractService.Query;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -81,7 +84,7 @@ namespace ERP.Presentation.Controllers.Module_1_Project_Site_Management
         [HttpGet("{projectId}/contract")]
         public async Task<IActionResult> GetProjectContract(Guid projectId)
         {
-            var result = await _projectService.GetProjectContractDetails(projectId);
+            var result = await _mediator.Send(new GetProjectContractDetailsQuery(projectId));
 
             return result.IsSuccess ? Ok(result.Data) : NotFound(result.Message);
         }
@@ -195,5 +198,14 @@ namespace ERP.Presentation.Controllers.Module_1_Project_Site_Management
 
             return Ok(result);
         }
+
+        [HttpPost("{projectId}/Contract")]
+        public async Task<IActionResult> CreateContract(Guid projectId,CreateContractDto createContractDto)
+        {
+            var result = await _mediator.Send(new CreateContractCommand(projectId,createContractDto));
+          return result.IsSuccess? Ok(result.Data) : BadRequest(result.Message);
+        }
+
+        
     }
 }

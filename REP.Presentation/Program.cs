@@ -3,10 +3,12 @@ using ERP.Application.AutoMapper;
 using ERP.Application.AutoMapper.Module_1_Project_Site_Management;
 using ERP.Application.AutoMapper.Module_2__Procurement_Inventory;
 using ERP.Application.AutoMapper.Module_3___Equipment_Machinery;
+using ERP.Application.AutoMapper.Module_4___Finance;
 using ERP.Application.Interfaces.Repository;
 using ERP.Application.Interfaces.Repository.Module_1_Project_Site_Management;
 using ERP.Application.Interfaces.Repository.Module_2__Procurement_Inventory;
 using ERP.Application.Interfaces.Repository.Module_3___Equipment_Machinery;
+using ERP.Application.Interfaces.Repository.Module_4___Finance;
 using ERP.Application.Interfaces.Services;
 using ERP.Application.Interfaces.Services.Module_1_Project_Site_Management;
 using ERP.Application.Interfaces.Services.Module_3___Equipment_Machinery;
@@ -14,6 +16,7 @@ using ERP.Infrastructure.Persistence;
 using ERP.Infrastructure.Repository.Module_1_Project_Site_Management;
 using ERP.Infrastructure.Repository.Module_2__Procurement_Inventory;
 using ERP.Infrastructure.Repository.Module_3___Equipment_Machinery;
+using ERP.Infrastructure.Repository.Module_4___Finance;
 using ERP.Infrastructure.Services.Module_1_Project_Site_Management;
 using ERP.Infrastructure.Services.Module_2__Procurement_Inventory.SupplierHandler;
 using ERP.Infrastructure.Services.Module_3___Equipment_Machinery;
@@ -54,6 +57,7 @@ namespace REP.Presentation
                 cfg.AddProfile<MaterialRequirementProfile>();
                 cfg.AddProfile<MaterialConsumptionProfile>();
                 cfg.AddProfile<ProjectOrderRequestProfile>();
+                cfg.AddProfile<ContractProfile>();
 
             });
 
@@ -99,8 +103,20 @@ namespace REP.Presentation
             builder.Services.AddScoped<IProjectWarehouseStockRepository, ProjectWarehouseStockRepository>();
             builder.Services.AddScoped<IProjectOrderRequestRepository, ProjectOrderRequestRepository>();
             builder.Services.AddScoped<IStockTransferRepository, StockTransferRepository>();
-       
+
             #endregion
+
+
+
+            #region Module_4___Finance(Repository)
+
+            builder.Services.AddScoped<IContractProjectRepository, ContractProjectRepository>();
+            builder.Services.AddScoped<IContractInstallmentPlanRepository, ContracInstallmentPlanRepository>();
+            builder.Services.AddScoped<IContractPaymentRecordRepository, ContractPaymentRecordRepository>();
+           
+
+            #endregion
+
 
             #endregion
 

@@ -1,26 +1,22 @@
-﻿using ERP.Domain.Model.Module_4___Finance;
+﻿using ERP.Domain.Model;
+using ERP.Domain.Model.Module_4___Finance;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ERP.Domain.Model
+namespace ERP.Application.Dtos.Module_4___Finance.ContractDtos
 {
-    public class ContractPaymentRecord
+    public class ContractPaymentRecordDto
     {
         public Guid Id { get; set; }
         public decimal AmountDue { get; set; }
         public decimal? AmountPaid { get; set; }
         public DateOnly DueDate { get; set; }
         public DateOnly? PaidDate { get; set; }
-        
-        //Navigation
         public Guid ContractId { get; set; }
-        public ContractProject ContractProject { get; set; }
-      
         public int ContractInstallmentPlanId { get; set; }
-        public ContractInstallmentPlan ContractInstallmentPlan { get; set; }
+   
     }
 }

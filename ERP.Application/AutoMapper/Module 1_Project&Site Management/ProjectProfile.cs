@@ -38,7 +38,7 @@ namespace ERP.Application.AutoMapper
             CreateMap<AssignProjectPhaseDto, ProjectPhase>();
             //----------------------------------------------------
 
-            CreateMap<ContractProject, ProjectContractDto>();
+           // CreateMap<ContractProject, ProjectContractDto>();
 
             //-----------------------------
 

@@ -13,5 +13,6 @@ namespace ERP.Application.Interfaces.Repository.Module_4___Finance
         Task<MaterialPurchase?> GetByIdWithInclude(Guid MaterialPurchaseId, params Expression<Func<MaterialPurchase, object>>[] Includes);
 
         Task<MaterialPurchase?> GetMaterialPurchaseDetailsById(Guid MaterialPurchaseId);
+        Task<List<MaterialPurchaseItem>> GetMaterialPurchaseItemsByMaterialIds(List<Guid> materialIds);
     }
 }

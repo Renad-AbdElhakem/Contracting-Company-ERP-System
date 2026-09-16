@@ -1,10 +1,14 @@
 ﻿using ERP.Application.Dtos.Module_1_Project_Site_Management;
 using ERP.Application.Dtos.Module_2__Procurement_Inventory.MaterialConsumptionDtos;
 using ERP.Application.Dtos.Module_2__Procurement_Inventory.MaterialRequirementsDtos;
+using ERP.Application.Dtos.Module_4___Finance.InternalExpensesDtos;
 using ERP.Application.Interfaces.Services.Module_1_Project_Site_Management;
 using ERP.Application.Interfaces.Services.Module_2__Procurement_Inventory.MaterialRequirementsService.Command;
 using ERP.Application.Interfaces.Services.Module_2__Procurement_Inventory.MaterialRequirementsService.Query;
+using ERP.Application.Interfaces.Services.Module_4___Finance.InternalExpensesService.Command;
+using ERP.Application.Interfaces.Services.Module_4___Finance.InternalExpensesService.Query;
 using ERP.Domain.Model._1_Project_Site_Management;
+using ERP.Infrastructure.Services.Module_4___Finance.InternalExpensesHandler.QueryHandler;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -66,17 +70,37 @@ namespace ERP.Presentation.Controllers.Module_1_Project_Site_Management
 
             return result.IsSuccess ? Ok(result) : NotFound(result);
         }
-       
+
         [HttpGet("{projectPhaseId}/materialconsumption")]
         public async Task<ActionResult<List<MaterialConsumptionDetailsDto>>> GetConsumptionsByProjectPhaseId(int projectPhaseId)
         {
             var result = await _projectPhasesService.GetConsumptionsByProjectPhaseId(projectPhaseId);
 
-           return Ok(result);
+            return Ok(result);
         }
-       
-       
 
+
+        [HttpPost("{projectPhaseId}/expenses")]
+        public async Task<IActionResult> CreateProjectExpense(int projectPhaseId, CreateProjectExpenseDto dto)
+        {
+            var result = await _mediator.Send(new CreateProjectExpenseCommand(projectPhaseId, dto));
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+
+        [HttpGet("{projectPhaseId}/expenses")]
+        public async Task<IActionResult> GetProjectExpensesByPhase(int projectPhaseId)
+        {
+            var result = await _mediator.Send(new GetProjectExpensesByPhaseQuery(projectPhaseId));
+
+            return Ok(result);
+        }
+        [HttpGet("{projectPhaseId}/cost-variance")]
+        public async Task<IActionResult> GetProjectPhaseCostVarianceByPhaseId(int projectPhaseId)
+        {
+            var result = await _mediator.Send(new GetPhaseCostVarianceQuery(projectPhaseId));
+
+            return Ok(result);
+        }
 
 
     }

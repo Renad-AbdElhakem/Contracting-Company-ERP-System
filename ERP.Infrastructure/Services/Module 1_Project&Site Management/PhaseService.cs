@@ -4,6 +4,7 @@ using ERP.Application.Dtos.Module_1_Project_Site_Management;
 using ERP.Application.Interfaces.Repository.Module_1_Project_Site_Management;
 using ERP.Application.Interfaces.Services.Module_1_Project_Site_Management;
 using ERP.Domain.Model;
+using ERP.Domain.Model._1_Project_Site_Management;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
 
             return GeneralResponse<PhaseDto>.Success(phaseDto);
         }
-
+       
         public async Task<GeneralResponse<List<PhaseDto>>> GetAllPhasesAsync()
         {
             var phases = await _phaseRepository.GetAllAsync();

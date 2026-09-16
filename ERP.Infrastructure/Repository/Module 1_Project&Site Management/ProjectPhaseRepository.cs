@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -54,6 +55,22 @@ namespace ERP.Infrastructure.Repository.Module_1_Project_Site_Management
 
 
         }
+
+
+        public async Task<decimal> GetSumTotalExpenseByProjectPhaseId(int projectPhaseId)
+        {
+            return await _dbSet
+          .Where(ph => ph.Id == projectPhaseId)
+          .SelectMany(ph => ph.ProjectExpenses)
+          .SumAsync(p => p.Amount);
+        }
+
+        public async Task<ProjectPhase?> GetMaterialConsumptionByProjectPhaseId(int projectPhaseId)
+        {
+            return await _dbSet.Include(m => m.MaterialConsumptions)
+                     .FirstOrDefaultAsync(p => p.Id == projectPhaseId);
+        }
+
 
         //R
 

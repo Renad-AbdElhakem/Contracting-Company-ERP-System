@@ -94,6 +94,11 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
             var projectPhase = await _projectPhaseRepository.GetByIdAsync(projectPhaseId);
             return _mapper.Map<ProjectPhasesDetailsDto>(projectPhase);
         }
+        public async Task<ProjectPhase?> GetByIdAsync(int projectPhaseId)
+        {
+            return await _projectPhaseRepository.GetByIdAsync(projectPhaseId);
+           
+        }
 
 
         public async Task<List<MaterialConsumptionDetailsDto>> GetConsumptionsByProjectPhaseId(int projectPhaseId)
@@ -103,7 +108,44 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
             return _mapper.Map<List<MaterialConsumptionDetailsDto>>(projectPhase.MaterialConsumptions);
         }
 
-      
+
+        public async Task<GeneralResponse<ProjectPhase>> GetProjectPhaseWithExpensesAsync(int projectPhaseId)
+        {
+            var projectPhase = await _projectPhaseRepository.GetByIdWithInclude(projectPhaseId, x => x.ProjectExpenses);
+
+            if (projectPhase is null)
+                return GeneralResponse<ProjectPhase>.Fail($"Project phase with id {projectPhaseId} not found.");
+
+            return GeneralResponse<ProjectPhase>.Success(projectPhase);
+        }
+        public async Task<GeneralResponse<bool>> UpdateAsync(ProjectPhase projectPhase)
+        {
+            if (projectPhase is null)
+                return GeneralResponse<bool>.Fail("Project phase is required.");
+
+            await _projectPhaseRepository.UpdateAsync(projectPhase);
+
+            return GeneralResponse<bool>.Success(true);
+        }
+
+
+        public async Task<decimal> GetTotalExpensesByProjectPhaseIdAsync(int projectPhaseId)
+        {
+            return await _projectPhaseRepository.GetSumTotalExpenseByProjectPhaseId(projectPhaseId);
+        }
+
+        public async Task<GeneralResponse<ProjectPhase>> GetProjectPhaseWithMaterialConsumptionsAsync(int projectPhaseId)
+        {
+            var projectPhase = await _projectPhaseRepository.GetMaterialConsumptionByProjectPhaseId(projectPhaseId);
+
+            if (projectPhase is null)
+                return GeneralResponse<ProjectPhase>.Fail($"Project phase with id {projectPhaseId} not found.");
+
+            return GeneralResponse<ProjectPhase>.Success(projectPhase);
+        }
+
+
+
 
 
     }

@@ -14,6 +14,8 @@ namespace ERP.Application.Interfaces.Repository
         Task<ProjectPhase?> GetByIdWithInclude(int projectPhaseId, params Expression<Func<ProjectPhase, object>>[] Includes);
         Task<bool> IsExistAsync(int projectPhaseId);
         Task<ProjectPhase?> GetAllMaterialConsumptionsByProjectPhaseIdAsync(int projectPhaseId);
+        Task<decimal> GetSumTotalExpenseByProjectPhaseId(int projectPhaseId);
+        Task<ProjectPhase?> GetMaterialConsumptionByProjectPhaseId(int projectPhaseId);
       //  Task<ProjectPhase?> GetAllPhaseMaterialVarianceByProjectPhaseIdAsync(int projectPhaseId);
     }
 }

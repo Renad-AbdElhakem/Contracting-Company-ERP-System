@@ -17,7 +17,7 @@ namespace ERP.Infrastructure.Repository.Module_4___Finance
 
         public MaterialPurchaseRepository(ApplicationDbContext context) : base(context)
         {
-           _context = context;
+            _context = context;
         }
 
 
@@ -34,9 +34,16 @@ namespace ERP.Infrastructure.Repository.Module_4___Finance
         }
         public async Task<MaterialPurchase?> GetMaterialPurchaseDetailsById(Guid MaterialPurchaseId)
         {
-          return await  _dbSet.Include(pt=>pt.MaterialPurchaseItems)
-                              .Include(py=>py.Payments)
-             .FirstOrDefaultAsync(p => p.Id == MaterialPurchaseId);
+            return await _dbSet.Include(pt => pt.MaterialPurchaseItems)
+                                .Include(py => py.Payments)
+               .FirstOrDefaultAsync(p => p.Id == MaterialPurchaseId);
+        }
+        public async Task<List<MaterialPurchaseItem>> GetMaterialPurchaseItemsByMaterialIds(List<Guid> materialIds)
+        {
+            return await _dbSet
+                .SelectMany(mp => mp.MaterialPurchaseItems)
+                .Where(item => materialIds.Contains(item.MaterialId))
+                .ToListAsync();
         }
 
 

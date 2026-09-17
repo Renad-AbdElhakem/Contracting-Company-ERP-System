@@ -37,6 +37,13 @@ namespace ERP.Infrastructure.Repository.Module_1_Project_Site_Management
         }
 
 
+        public async Task<Project?> GetProjectWithPhase(Guid projectId)
+        {
+            return await _dbSet
+                .Include(p => p.ProjectPhases)
+                .ThenInclude(pe => pe.Phase)
+                .FirstOrDefaultAsync(p => p.Id == projectId);
+        }
         public async Task<Project?> GetProjectWithEmployees(Guid projectId)
         {
             return await _dbSet
@@ -44,6 +51,8 @@ namespace ERP.Infrastructure.Repository.Module_1_Project_Site_Management
                 .ThenInclude(pe => pe.Employee)
                 .FirstOrDefaultAsync(p => p.Id == projectId);
         }
+
+       
 
         public async Task<Project?> GetProjectWithOrderRequestsAsync(Guid projectId)
         {

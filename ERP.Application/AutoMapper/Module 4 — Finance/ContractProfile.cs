@@ -16,15 +16,19 @@ namespace ERP.Application.AutoMapper.Module_4___Finance
         public ContractProfile()
         {
             CreateMap<CreateContractDto, ContractProject>();
-     
+
+            CreateMap<ContractProject, AllProjectContractDetailsDto>()
+          .ForMember(dest => dest.ContractId, opt => opt.MapFrom(src => src.Id));
+          
             CreateMap<ContractProject, ProjectContractDto>()
                 .ForMember(dest => dest.ContractId, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.ClientName,opt=>opt.MapFrom(src=>src.Client.Name));
+                .ForMember(dest => dest.ClientName, opt => opt.MapFrom(src => src.Client.Name));
 
             CreateMap<CreateInstallmentPlanDto, ContractInstallmentPlan>();
             CreateMap<ContractInstallmentPlan, ContractInstallmentPlanDto>();
-           
+
             CreateMap<ContractPaymentRecord, ContractPaymentRecordDto>();
+
         }
     }
 }

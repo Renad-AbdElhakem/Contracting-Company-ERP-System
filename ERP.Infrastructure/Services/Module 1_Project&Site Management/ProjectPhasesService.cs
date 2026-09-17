@@ -54,12 +54,6 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
 
             projectPhase.FinishedDate = DateOnly.FromDateTime(DateTime.UtcNow);
 
-            //R
-            //projectPhase.ActualCost = dto.ActualCost;
-
-            //if (dto.ActualCost is not null)
-            //    projectPhase.ActualCostCalculatedAt = DateTime.UtcNow;
-
             await _projectPhaseRepository.UpdateAsync(projectPhase);
 
             return GeneralResponse<bool>.Success(true);

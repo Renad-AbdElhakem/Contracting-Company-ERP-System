@@ -12,5 +12,7 @@ namespace ERP.Application.Interfaces.Repository.Module_4___Finance
     {
         Task<ContractProject?> GetByIdWithInclude(Guid contractProjectId, params Expression<Func<ContractProject, object>>[] Includes);
         Task<int> GetLatePaymentsCountAsync(Guid contractProjectId);
+        Task<ContractProject?> GetAllProjectContractDetails(Guid projectId);
+        Task<decimal?> GetSumContractPaymentRecordsByProjectId(Guid projectId);
     }
 }

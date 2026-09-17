@@ -2,6 +2,7 @@
 using ERP.Application.Interfaces.Repository;
 using ERP.Domain.Model;
 using ERP.Domain.Model._1_Project_Site_Management;
+using ERP.Domain.Model.Module_2__Procurement_Inventory;
 using ERP.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -52,8 +53,14 @@ namespace ERP.Infrastructure.Repository.Module_1_Project_Site_Management
             return await _dbSet.Include(c => c.MaterialConsumptions)
                                .ThenInclude(m => m.Material)
                                .FirstOrDefaultAsync(ph => ph.Id == projectPhaseId);
+        }
+        public async Task<ProjectPhase?> GetAllMaterialVarianceByProjectPhaseIdAsync(int projectPhaseId)
+        {
 
-
+            return await _dbSet.Include(c => c.MaterialConsumptions)
+                                .Include(r => r.ProjectMaterials)
+                               .ThenInclude(m => m.Material)
+                               .FirstOrDefaultAsync(ph => ph.Id == projectPhaseId);
         }
 
 
@@ -70,18 +77,21 @@ namespace ERP.Infrastructure.Repository.Module_1_Project_Site_Management
             return await _dbSet.Include(m => m.MaterialConsumptions)
                      .FirstOrDefaultAsync(p => p.Id == projectPhaseId);
         }
-
-
-        //R
-
-        //public async Task<ProjectPhase?> GetAllPhaseMaterialVarianceByProjectPhaseIdAsync(int projectPhaseId)
-        //{
-        // return await _dbSet.Include(c => c.MaterialConsumptions)
-        //                       .Include(r => r.ProjectMaterials)
-        //                       .ThenInclude(m => m.Material)
-        //                       .FirstOrDefaultAsync(ph => ph.Id == projectPhaseId);
-        //}
-
+        public async Task<decimal> GetTotalExpensesByProjectIdAsync(Guid projectId)
+        {
+            return await _dbSet.Where(ph => ph.ProjectId == projectId)
+                                .SelectMany(e=>e.ProjectExpenses)
+                               .SumAsync(p => p.Amount);
+                
+        }
+        public async Task<List<MaterialConsumption>> GetMaterialConsumptionsByProjectIdAsync(Guid projectId)
+        {
+            return await _dbSet
+                .Where(ph => ph.ProjectId == projectId)
+                .SelectMany(ph => ph.MaterialConsumptions)
+                .ToListAsync();
+        }
+      
 
 
     }

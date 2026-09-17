@@ -1,4 +1,5 @@
 ﻿using ERP.Domain.Model._1_Project_Site_Management;
+using ERP.Domain.Model.Module_2__Procurement_Inventory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace ERP.Application.Interfaces.Repository
         Task<ProjectPhase?> GetAllMaterialConsumptionsByProjectPhaseIdAsync(int projectPhaseId);
         Task<decimal> GetSumTotalExpenseByProjectPhaseId(int projectPhaseId);
         Task<ProjectPhase?> GetMaterialConsumptionByProjectPhaseId(int projectPhaseId);
-      //  Task<ProjectPhase?> GetAllPhaseMaterialVarianceByProjectPhaseIdAsync(int projectPhaseId);
+        Task<decimal> GetTotalExpensesByProjectIdAsync(Guid projectId);
+        Task<List<MaterialConsumption>> GetMaterialConsumptionsByProjectIdAsync(Guid projectId);
+        Task<ProjectPhase?> GetAllMaterialVarianceByProjectPhaseIdAsync(int projectPhaseId);
     }
 }

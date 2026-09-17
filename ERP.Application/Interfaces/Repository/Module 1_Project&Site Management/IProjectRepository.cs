@@ -13,6 +13,7 @@ namespace ERP.Application.Interfaces.Repository.Module_1_Project_Site_Management
         Task<Project?> GetByIdWithInclude(Guid projectId, params Expression<Func<Project, object>>[] Includes);
         Task<Project?> GetProjectWithEmployees(Guid projectId);
         Task<Project?> GetProjectWithOrderRequestsAsync(Guid projectId);
+        Task<Project?> GetProjectWithPhase(Guid projectId);
 
     }
 }

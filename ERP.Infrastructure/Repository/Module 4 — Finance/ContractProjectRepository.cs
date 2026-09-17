@@ -40,7 +40,20 @@ namespace ERP.Infrastructure.Repository.Module_4___Finance
                        .Where(r => r.AmountPaid == null && r.DueDate < today))
                        .CountAsync();
 
-            
+
+        }
+
+        public async Task<ContractProject?> GetAllProjectContractDetails(Guid projectId)
+        {
+            return await _dbSet.Include(pr => pr.ContractPaymentRecords)
+                               .Include(plan => plan.ContractPaymentPlans)
+                              .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+        }
+        public async Task<decimal?> GetSumContractPaymentRecordsByProjectId(Guid projectId)
+        {
+            return await _dbSet.Where(p => p.ProjectId == projectId)
+                                .SelectMany(pr => pr.ContractPaymentRecords)
+                               .SumAsync(P => P.AmountPaid);
         }
     }
 }

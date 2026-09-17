@@ -60,6 +60,7 @@ namespace REP.Presentation
                 cfg.AddProfile<ContractProfile>();
                 cfg.AddProfile<MaterialPurchaseProfile>();
                 cfg.AddProfile<InternalExpensesProfile>();
+                cfg.AddProfile<ProjectFinancialSnapshotProfile>();
 
             });
 
@@ -117,6 +118,7 @@ namespace REP.Presentation
             builder.Services.AddScoped<IContractPaymentRecordRepository, ContractPaymentRecordRepository>();
             builder.Services.AddScoped<IMaterialPurchaseRepository, MaterialPurchaseRepository>();
             builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
+            builder.Services.AddScoped<IProjectFinancialSnapshotRepository, ProjectFinancialSnapshotRepository>();
            
 
             #endregion

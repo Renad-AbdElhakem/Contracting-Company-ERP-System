@@ -51,7 +51,13 @@ namespace ERP.Presentation.Controllers.Module_4___Finance
         }
 
 
+        [HttpGet("{projectId}/total-paid")]
+        public async Task<IActionResult> GetSumContractPaymentRecordsByProjectId(Guid projectId)
+        {
+            var result = await _mediator.Send(new GetSumContractPaymentRecordsByProjectIdQuery(projectId));
 
+            return Ok(result);
+        }
 
 
 

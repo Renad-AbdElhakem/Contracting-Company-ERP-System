@@ -105,7 +105,8 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
 
         public async Task<GeneralResponse<List<ProjectPhasesDetailsDto>>> GetProjectPhasesDetails(Guid projectId)
         {
-            var projectPhase = await _projectRepository.GetByIdWithInclude(projectId, ph => ph.ProjectPhases);
+          //  var projectPhase = await _projectRepository.GetByIdWithInclude(projectId, ph => ph.ProjectPhases);
+            var projectPhase = await _projectRepository.GetProjectWithPhase(projectId);
 
             if (projectPhase is null)
                 return GeneralResponse<List<ProjectPhasesDetailsDto>>.Fail($"Project with id {projectId} not found");

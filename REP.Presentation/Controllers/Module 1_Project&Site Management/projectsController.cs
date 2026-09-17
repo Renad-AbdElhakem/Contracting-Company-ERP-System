@@ -4,11 +4,14 @@ using ERP.Application.Dtos.Module_2__Procurement_Inventory.ProjectOrderRequestDt
 using ERP.Application.Dtos.Module_2__Procurement_Inventory.ProjectWarehouseDtos;
 using ERP.Application.Dtos.Module_3___Equipment_Machinery;
 using ERP.Application.Dtos.Module_4___Finance.ContractDtos;
+using ERP.Application.Dtos.Module_4___Finance.ProjectFinancialSnapshotDtos;
 using ERP.Application.Interfaces.Services.Module_1_Project_Site_Management;
 using ERP.Application.Interfaces.Services.Module_2__Procurement_Inventory.ProjectOrderRequestService.Query;
 using ERP.Application.Interfaces.Services.Module_2__Procurement_Inventory.ProjectWarehouseService.Command;
 using ERP.Application.Interfaces.Services.Module_4___Finance.ContractService.Command;
 using ERP.Application.Interfaces.Services.Module_4___Finance.ContractService.Query;
+using ERP.Application.Interfaces.Services.Module_4___Finance.ProjectFinancialSnapshotService.Command;
+using ERP.Application.Interfaces.Services.Module_4___Finance.ProjectFinancialSnapshotService.Query;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -81,13 +84,6 @@ namespace ERP.Presentation.Controllers.Module_1_Project_Site_Management
         }
 
 
-        [HttpGet("{projectId}/contract")]
-        public async Task<IActionResult> GetProjectContract(Guid projectId)
-        {
-            var result = await _mediator.Send(new GetProjectContractDetailsQuery(projectId));
-
-            return result.IsSuccess ? Ok(result.Data) : NotFound(result.Message);
-        }
 
 
         [HttpGet("{projectId}/employees")]
@@ -206,6 +202,46 @@ namespace ERP.Presentation.Controllers.Module_1_Project_Site_Management
           return result.IsSuccess? Ok(result.Data) : BadRequest(result.Message);
         }
 
-        
+        [HttpGet("{projectId}/contract")]
+        public async Task<IActionResult> GetProjectContract(Guid projectId)
+        {
+            var result = await _mediator.Send(new GetProjectContractDetailsQuery(projectId));
+
+            return result.IsSuccess ? Ok(result.Data) : NotFound(result.Message);
+        }
+
+
+        [HttpGet("{projectId}/contract/alldetails")]
+        public async Task<ActionResult<GeneralResponse<AllProjectContractDetailsDto>>> GetAllProjectContractDetails(Guid projectId)
+        {
+            var result = await _mediator.Send(new GetAllProjectContractDetailsByProjectIdQuery(projectId));
+
+            return result.IsSuccess ? Ok(result.Data) : NotFound(result.Message);
+        }
+
+        [HttpPost("{projectId}/financial-snapshots")]
+        public async Task<IActionResult> CreateFinancialSnapshot(Guid projectId, int  CreatedByEmployeeId)
+        {
+            var result = await _mediator.Send(new CreateFinancialSnapshotCommand(projectId, CreatedByEmployeeId));
+            return result.IsSuccess ? Ok(result.Data) : BadRequest(result.Message);
+        }
+
+
+        [HttpGet("{projectId}/financial-snapshots")]
+        public async Task<ActionResult<GeneralResponse<List<ProjectFinancialSnapshotDto>>>> GetAllProjectFinancialSnapshotDetails(Guid projectId)
+        {
+            var result = await _mediator.Send(new GetFinancialSnapshotsByProjectQuery(projectId));
+
+            return result.IsSuccess ? Ok(result.Data) : NotFound(result.Message);
+        }
+
+        [HttpGet("{projectId}/financial-snapshots/latest")]
+        public async Task<ActionResult<GeneralResponse<ProjectFinancialSnapshotDto>>> GetLatestProjectFinancialSnapshotDetails(Guid projectId)
+        {
+            var result = await _mediator.Send(new GetLatestFinancialSnapshotQuery(projectId));
+
+            return result.IsSuccess ? Ok(result.Data) : NotFound(result.Message);
+        }
+
     }
 }

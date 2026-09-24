@@ -51,13 +51,12 @@ namespace ERP.Infrastructure.Services.Module_4___Finance.ProjectFinancialSnapsho
             if (project is null)
                 return GeneralResponse<Guid>.Fail($"Project with id {request.ProjectId} not found");
 
-            // 1) Revenue
+           
             var actualRevenue = await _contractProjectRepository.GetSumContractPaymentRecordsByProjectId(request.ProjectId) ?? 0;
 
-            // 2) Cost - Part A: manual expenses across all phases
+          
             var expensesTotal = await _projectPhaseRepository.GetTotalExpensesByProjectIdAsync(request.ProjectId);
 
-            // 2) Cost - Part B: material consumption cost across all phases
             var consumptions = await _projectPhaseRepository.GetMaterialConsumptionsByProjectIdAsync(request.ProjectId);
 
             var materialIds = consumptions.Select(c => c.MaterialId).Distinct().ToList();

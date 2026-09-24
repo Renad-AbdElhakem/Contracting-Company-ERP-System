@@ -8,12 +8,12 @@ namespace ERP.Presentation.Controllers.Module_3___Equipment_Machinery
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MaintenanceController : ControllerBase
+    public class MaintenancesController : ControllerBase
     {
         private readonly IMaintenanceService _maintenanceService;
         private readonly IEquipmentService _equipmentService;
 
-        public MaintenanceController(IMaintenanceService maintenanceService, IEquipmentService equipmentService)
+        public MaintenancesController(IMaintenanceService maintenanceService, IEquipmentService equipmentService)
         {
             _maintenanceService = maintenanceService;
             _equipmentService = equipmentService;

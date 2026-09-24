@@ -7,11 +7,11 @@ namespace ERP.Presentation.Controllers.Module_1_Project_Site_Management
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PhaseController : ControllerBase
+    public class PhasesController : ControllerBase
     {
         private readonly IPhaseService _phaseService;
 
-        public PhaseController(IPhaseService phaseService)
+        public PhasesController(IPhaseService phaseService)
         {
             _phaseService = phaseService;
         }

@@ -80,7 +80,7 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
                 return GeneralResponse<bool>.Fail(response.Message);
 
             project.Status = ProjectStatus.Completed;
-            project.ActualEndDate = DateOnly.FromDateTime(DateTime.UtcNow);
+            project.ActualEndDate = DateOnly.FromDateTime(DateTime.Now);
 
             await _projectRepository.UpdateAsync(project);
 
@@ -105,7 +105,7 @@ namespace ERP.Infrastructure.Services.Module_1_Project_Site_Management
 
         public async Task<GeneralResponse<List<ProjectPhasesDetailsDto>>> GetProjectPhasesDetails(Guid projectId)
         {
-          //  var projectPhase = await _projectRepository.GetByIdWithInclude(projectId, ph => ph.ProjectPhases);
+         
             var projectPhase = await _projectRepository.GetProjectWithPhase(projectId);
 
             if (projectPhase is null)

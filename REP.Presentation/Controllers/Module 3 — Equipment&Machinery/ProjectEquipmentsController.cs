@@ -7,11 +7,11 @@ namespace ERP.Presentation.Controllers.Module_3___Equipment_Machinery
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProjectEquipmentController : ControllerBase
+    public class ProjectEquipmentsController : ControllerBase
     {
         private readonly IProjectEquipmentService _projectEquipmentService;
 
-        public ProjectEquipmentController(IProjectEquipmentService projectEquipmentService)
+        public ProjectEquipmentsController(IProjectEquipmentService projectEquipmentService)
         {
             _projectEquipmentService = projectEquipmentService;
         }

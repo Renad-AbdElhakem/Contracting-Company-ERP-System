@@ -11,11 +11,11 @@ namespace ERP.Presentation.Controllers.Module_2__Procurement_Inventory
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProjectOrderRequestController : ControllerBase
+    public class ProjectOrderRequestsController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public ProjectOrderRequestController(IMediator mediator)
+        public ProjectOrderRequestsController(IMediator mediator)
         {
             _mediator = mediator;
         }
